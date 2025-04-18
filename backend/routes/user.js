@@ -1,15 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../models/User");
+const Balance = require("../models/Balance");
 
 // Create a new user
 router.post("/", async (req, res) => {
   try {
-    const { name, phoneNumber, remark } = req.body;
+    const { name, phoneNumber, remark, totalCredit, totalDebit, totalAmount } =
+      req.body;
     const newUser = new User({
       name,
       phoneNumber,
       remark,
+      totalCredit: totalCredit,
+      totalDebit: totalDebit,
+      totalAmount: totalCredit - totalDebit,
     });
 
     const savedUser = await newUser.save();
@@ -45,7 +50,7 @@ router.get("/", async (req, res) => {
       .populate("balance")
       .skip(skip)
       .limit(limit)
-      .sort({ date: -1 });
+      .sort({ createdAt: -1 });
 
     res.json({
       users,
@@ -77,12 +82,26 @@ router.get("/:id", async (req, res) => {
 // Update a user
 router.put("/:id", async (req, res) => {
   try {
-    const { name, phoneNumber, remark } = req.body;
-    const updatedUser = await User.findByIdAndUpdate(
-      req.params.id,
-      { name, phoneNumber, remark },
-      { new: true }
-    );
+    const { name, phoneNumber, remark, totalCredit, totalDebit, totalAmount } =
+      req.body;
+    const user = await User.findById(req.params.id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    const credit = totalCredit || user.totalCredit;
+    const debit = totalDebit - user.totalDebit;
+    const payload = {
+      name: name || user.name,
+      phoneNumber: phoneNumber || user.phoneNumber,
+      remark: remark || user.remark,
+      totalCredit: credit,
+      totalDebit: debit,
+      totalAmount: credit - debit,
+    };
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, payload, {
+      new: true,
+    });
 
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
@@ -97,33 +116,89 @@ router.put("/:id", async (req, res) => {
 // Delete a user
 router.delete("/:id", async (req, res) => {
   try {
-    const deletedUser = await User.findByIdAndDelete(req.params.id);
+    const user = await User.findById(req.params.id);
 
-    if (!deletedUser) {
+    if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json({ message: "User deleted successfully" });
+    // Delete all associated balance entries
+    if (user.balance && user.balance.length > 0) {
+      await Balance.deleteMany({ _id: { $in: user.balance } });
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(req.params.id);
+
+    res
+      .status(200)
+      .json({ message: "User and associated balances deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// Add a debit to a user
-router.post("/:id/debits", async (req, res) => {
+// Add a balance to a user
+router.post("/:id/balance", async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const { debitId } = req.body;
-    user.debits.push(debitId);
+    const { credit, debit, paidStatus } = req.body;
+
+    const newBalance = new Balance({
+      credit: credit || 0,
+      debit: debit || 0,
+      paidStatus: paidStatus || "notPaid",
+    });
+
+    const savedBalance = await newBalance.save();
+
+    // Update user's balance array and totals
+    user.balance.push(savedBalance._id);
+    user.totalCredit += credit || 0;
+    user.totalDebit += debit || 0;
+    user.totalAmount = user.totalCredit - user.totalDebit;
+
     await user.save();
 
-    res.status(200).json(user);
+    res.status(201).json({
+      user,
+      addedBalance: savedBalance,
+    });
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+});
+
+// Get user's balance summary
+router.get("/:id/summary", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).populate("balance");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const paidBalances = user.balance.filter((b) => b.paidStatus === "paided");
+    const unpaidBalances = user.balance.filter(
+      (b) => b.paidStatus === "notPaid"
+    );
+
+    res.status(200).json({
+      userId: user._id,
+      userName: user.name,
+      totalCredit: user.totalCredit,
+      totalDebit: user.totalDebit,
+      totalAmount: user.totalAmount,
+      paidBalancesCount: paidBalances.length,
+      unpaidBalancesCount: unpaidBalances.length,
+      totalBalancesCount: user.balance.length,
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 

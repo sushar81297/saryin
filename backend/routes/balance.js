@@ -6,29 +6,35 @@ const User = require("../models/User");
 // Create a new balance entry
 router.post("/", async (req, res) => {
   try {
-    const { credit, debit, paidedAmount, paidStatus, userId } = req.body;
+    const { credit, debit, paidStatus, userId } = req.body;
 
     if (!userId) {
-      res.status(400).json({ message: "User ID is required" });
+      return res.status(400).json({ message: "User ID is required" });
     }
 
     const newBalance = new Balance({
       credit: credit || 0,
       debit: debit || 0,
-      paidedAmount: paidedAmount || 0,
       paidStatus: paidStatus || "notPaid",
     });
 
     const savedBalance = await newBalance.save();
 
-    // If userId is provided, add this balance to the user's debits array
-    if (userId) {
-      const user = await User.findById(userId);
-      if (user) {
-        user.debits.push(savedBalance._id);
-        await user.save();
-      }
+    // Add this balance to the user's balance array
+    const user = await User.findById(userId);
+    if (!user) {
+      await Balance.findByIdAndDelete(savedBalance._id);
+      return res.status(404).json({ message: "User not found" });
     }
+
+    user.balance.push(savedBalance._id);
+
+    // Update user's total amounts
+    user.totalCredit += credit || 0;
+    user.totalDebit += debit || 0;
+    user.totalAmount = user.totalCredit - user.totalDebit;
+
+    await user.save();
 
     res.status(201).json(savedBalance);
   } catch (error) {
@@ -62,17 +68,33 @@ router.get("/:id", async (req, res) => {
 // Update a balance entry
 router.put("/:id", async (req, res) => {
   try {
-    const { credit, debit, paidedAmount, paidStatus } = req.body;
+    const { credit, debit, paidStatus, userId } = req.body;
+
+    const balance = await Balance.findById(req.params.id);
+    if (!balance) {
+      return res.status(404).json({ message: "Balance not found" });
+    }
+
+    // Find the user who owns this balance
+    const user = await User.findOne({ balance: req.params.id });
+    if (user) {
+      // Update user totals by removing old values
+      user.totalCredit -= balance.credit || 0;
+      user.totalDebit -= balance.debit || 0;
+
+      // Add new values
+      user.totalCredit += credit || 0;
+      user.totalDebit += debit || 0;
+      user.totalAmount = user.totalCredit - user.totalDebit;
+
+      await user.save();
+    }
 
     const updatedBalance = await Balance.findByIdAndUpdate(
       req.params.id,
-      { credit, debit, paidedAmount, paidStatus },
+      { credit, debit, paidStatus },
       { new: true }
     );
-
-    if (!updatedBalance) {
-      return res.status(404).json({ message: "Balance not found" });
-    }
 
     res.status(200).json(updatedBalance);
   } catch (error) {
@@ -83,7 +105,7 @@ router.put("/:id", async (req, res) => {
 // Update payment status
 router.patch("/:id/payment", async (req, res) => {
   try {
-    const { paidStatus, paidedAmount } = req.body;
+    const { paidStatus } = req.body;
     const balance = await Balance.findById(req.params.id);
 
     if (!balance) {
@@ -91,20 +113,8 @@ router.patch("/:id/payment", async (req, res) => {
     }
 
     balance.paidStatus = paidStatus || balance.paidStatus;
-    balance.paidedAmount = paidedAmount || balance.paidedAmount;
-
-    // Update status based on payment
-    const totalDebt = balance.debit;
-
-    if (balance.paidedAmount >= totalDebt) {
-      balance.paidStatus = "paided";
-    } else if (balance.paidedAmount > 0) {
-      balance.paidStatus = "remain";
-    } else {
-      balance.paidStatus = "notPaid";
-    }
-
     const updatedBalance = await balance.save();
+
     res.status(200).json(updatedBalance);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -120,11 +130,20 @@ router.delete("/:id", async (req, res) => {
       return res.status(404).json({ message: "Balance not found" });
     }
 
-    // Remove this balance from any users that have it
-    await User.updateMany(
-      { debits: req.params.id },
-      { $pull: { debits: req.params.id } }
-    );
+    // Find the user who owns this balance and update their totals
+    const user = await User.findOne({ balance: req.params.id });
+    if (user) {
+      user.totalCredit -= balance.credit || 0;
+      user.totalDebit -= balance.debit || 0;
+      user.totalAmount = user.totalCredit - user.totalDebit;
+
+      // Remove this balance from the user's balance array
+      user.balance = user.balance.filter(
+        (balanceId) => balanceId.toString() !== req.params.id
+      );
+
+      await user.save();
+    }
 
     await Balance.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Balance deleted successfully" });
@@ -140,23 +159,28 @@ router.get("/summary/total", async (req, res) => {
 
     let totalCredit = 0;
     let totalDebit = 0;
-    let totalPaided = 0;
+    let totalPaid = 0;
+    let totalNotPaid = 0;
 
     balances.forEach((balance) => {
       totalCredit += balance.credit || 0;
       totalDebit += balance.debit || 0;
-      totalPaided += balance.paidedAmount || 0;
+
+      if (balance.paidStatus === "paided") {
+        totalPaid += balance.debit || 0;
+      } else {
+        totalNotPaid += balance.debit || 0;
+      }
     });
 
     const netBalance = totalCredit - totalDebit;
-    const remainingDebt = totalDebit - totalPaided;
 
     res.status(200).json({
       totalCredit,
       totalDebit,
-      totalPaided,
+      totalPaid,
+      totalNotPaid,
       netBalance,
-      remainingDebt,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
