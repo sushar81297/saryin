@@ -6,14 +6,22 @@ const Balance = require("../models/Balance");
 // Create a new user
 router.post("/", async (req, res) => {
   try {
-    const { name, phoneNumber, remark, totalCredit, totalDebit, totalAmount } =
-      req.body;
+    const {
+      name,
+      phoneNumber,
+      remark,
+      totalCredit,
+      totalDebit,
+      type,
+      totalAmount,
+    } = req.body;
     const newUser = new User({
       name,
       phoneNumber,
       remark,
       totalCredit: totalCredit,
       totalDebit: totalDebit,
+      type: type,
       totalAmount: totalCredit - totalDebit,
     });
 
@@ -89,8 +97,15 @@ router.get("/:id", async (req, res) => {
 // Update a user
 router.put("/:id", async (req, res) => {
   try {
-    const { name, phoneNumber, remark, totalCredit, totalDebit, totalAmount } =
-      req.body;
+    const {
+      name,
+      phoneNumber,
+      remark,
+      totalCredit,
+      totalDebit,
+      type,
+      totalAmount,
+    } = req.body;
     const user = await User.findById(req.params.id);
 
     if (!user) {
@@ -104,6 +119,7 @@ router.put("/:id", async (req, res) => {
       remark: remark || user.remark,
       totalCredit: credit,
       totalDebit: debit,
+      type: type,
       totalAmount: credit - debit,
     };
     const updatedUser = await User.findByIdAndUpdate(req.params.id, payload, {

@@ -15,6 +15,10 @@ import {
 } from "react-native-paper";
 import React, { useEffect, useState } from "react";
 
+import BeanCreditDialog from "../components/beanDetail/CreditDialog";
+import BeanDebitDialog from "../components/beanDetail/DebitDialog";
+import BeanSummary from "../components/beanDetail/BeanSummary";
+import BeanTransactionHistory from "../components/beanDetail/TransactionHistory";
 import CreditDialog from "../components/userDetail/CreditDialog";
 import DebitDialog from "../components/userDetail/DebitDialog";
 import EditUserDialog from "../components/userDetail/EditUserDialog";
@@ -66,12 +70,14 @@ const UserDetailScreen = ({ route }) => {
   };
 
   const handleAddDebit = async (data) => {
+    console.log(parseFloat(data.currentPrice), "data");
     try {
       await axios.post(`${API_URL}/balance`, {
         credit: 0,
         debit: parseFloat(data.debitAmount),
         userId: userId,
         remark: data.remark,
+        currentPrice: parseFloat(data.currentPrice) || 0,
       });
       fetchUserDetails();
       setDebitDialogVisible(false);
@@ -142,37 +148,62 @@ const UserDetailScreen = ({ route }) => {
             />
           </View>
 
-          {/* {user.remark && (
-            <Card.Content style={styles.section}>
-              <Title style={styles.sectionTitle}>မှတ်ချက်</Title>
-              <Paragraph>{user.remark}</Paragraph>
-            </Card.Content>
-          )} */}
+          {user.type && user.type === "bean" ? (
+            <>
+              <BeanSummary
+                user={user}
+                onCreditPress={() => setCreditDialogVisible(true)}
+                onDebitPress={() => setDebitDialogVisible(true)}
+              />
+              <BeanTransactionHistory
+                balances={user.balance}
+                onBalanceDeleted={fetchUserDetails}
+              />
+            </>
+          ) : (
+            <>
+              <UserSummary
+                user={user}
+                onCreditPress={() => setCreditDialogVisible(true)}
+                onDebitPress={() => setDebitDialogVisible(true)}
+              />
 
-          <UserSummary
-            user={user}
-            onCreditPress={() => setCreditDialogVisible(true)}
-            onDebitPress={() => setDebitDialogVisible(true)}
-          />
-
-          <TransactionHistory
-            balances={user.balance}
-            onBalanceDeleted={fetchUserDetails}
-          />
+              <TransactionHistory
+                balances={user.balance}
+                onBalanceDeleted={fetchUserDetails}
+              />
+            </>
+          )}
         </Card>
       </ScrollView>
 
-      <CreditDialog
-        visible={creditDialogVisible}
-        onDismiss={() => setCreditDialogVisible(false)}
-        onSubmit={handleAddCredit}
-      />
-
-      <DebitDialog
-        visible={debitDialogVisible}
-        onDismiss={() => setDebitDialogVisible(false)}
-        onSubmit={handleAddDebit}
-      />
+      {user.type && user.type === "bean" ? (
+        <>
+          <BeanCreditDialog
+            visible={creditDialogVisible}
+            onDismiss={() => setCreditDialogVisible(false)}
+            onSubmit={handleAddCredit}
+          />
+          <BeanDebitDialog
+            visible={debitDialogVisible}
+            onDismiss={() => setDebitDialogVisible(false)}
+            onSubmit={handleAddDebit}
+          />
+        </>
+      ) : (
+        <>
+          <CreditDialog
+            visible={creditDialogVisible}
+            onDismiss={() => setCreditDialogVisible(false)}
+            onSubmit={handleAddCredit}
+          />
+          <DebitDialog
+            visible={debitDialogVisible}
+            onDismiss={() => setDebitDialogVisible(false)}
+            onSubmit={handleAddDebit}
+          />
+        </>
+      )}
 
       <EditUserDialog
         visible={editDialogVisible}

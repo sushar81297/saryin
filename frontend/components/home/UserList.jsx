@@ -71,18 +71,34 @@ const UserList = ({ users, loading, navigation, onRefresh }) => {
         <Card style={styles.userCard}>
           <Card.Content style={styles.userCardContent}>
             <Avatar.Text size={50} label={initials} style={styles.avatar} />
-            <View style={styles.userInfo}>
-              {item.name && <Title>{item.name}</Title>}
-              {item.phoneNumber && <Paragraph>{item.phoneNumber}</Paragraph>}
-              <View style={styles.financialInfo}>
-                <Paragraph>
-                  <Text style={styles.label}>
-                    {Math.abs(item.totalAmount)} ကျပ်{" "}
-                    {`(${item.totalAmount >= 0 ? "ချန်ထားငွေ" : "အကြွေး"})`}
-                  </Text>
-                </Paragraph>
+            {item.type && item.type === "bean" ? (
+              <View style={styles.userInfo}>
+                {item.name && <Title>{item.name}</Title>}
+                {item.phoneNumber && <Paragraph>{item.phoneNumber}</Paragraph>}
+                <View style={styles.financialInfo}>
+                  <Paragraph>
+                    <Text style={styles.label}>
+                      {Math.abs(item.totalAmount)} Tin{" "}
+                      {`(${item.totalAmount >= 0 ? "Add Bean" : "Sell Bean"})`}
+                    </Text>
+                  </Paragraph>
+                </View>
               </View>
-            </View>
+            ) : (
+              <View style={styles.userInfo}>
+                {item.name && <Title>{item.name}</Title>}
+                {item.phoneNumber && <Paragraph>{item.phoneNumber}</Paragraph>}
+                <View style={styles.financialInfo}>
+                  <Paragraph>
+                    <Text style={styles.label}>
+                      {Math.abs(item.totalAmount)} ကျပ်{" "}
+                      {`(${item.totalAmount >= 0 ? "ချန်ထားငွေ" : "အကြွေး"})`}
+                    </Text>
+                  </Paragraph>
+                </View>
+              </View>
+            )}
+
             <IconButton
               icon="delete"
               size={24}
