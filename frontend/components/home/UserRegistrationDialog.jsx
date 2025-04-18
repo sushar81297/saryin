@@ -27,14 +27,12 @@ const UserRegistrationDialog = ({
         <Dialog.Content>
           <TextInput
             label="နာမည်"
-            value={newUser.name}
             onChangeText={(text) => handleInputChange("name", text)}
             style={styles.input}
             mode="outlined"
           />
           <TextInput
             label="ဖုန်းနံပါတ်"
-            value={newUser.phoneNumber}
             onChangeText={(text) => handleInputChange("phoneNumber", text)}
             style={styles.input}
             mode="outlined"
@@ -61,7 +59,6 @@ const UserRegistrationDialog = ({
           {transactionType === "credit" ? (
             <TextInput
               label="ဆပ်ငွေ"
-              value={newUser.creditAmount}
               onChangeText={(text) => handleInputChange("totalCredit", text)}
               style={styles.input}
               mode="outlined"
@@ -70,7 +67,6 @@ const UserRegistrationDialog = ({
           ) : (
             <TextInput
               label="အကြွေး"
-              value={newUser.debitAmount}
               onChangeText={(text) => handleInputChange("totalDebit", text)}
               style={styles.input}
               mode="outlined"
@@ -80,7 +76,6 @@ const UserRegistrationDialog = ({
 
           <TextInput
             label="မှတ်ချက်"
-            value={newUser.remark}
             onChangeText={(text) => handleInputChange("remark", text)}
             style={styles.input}
             mode="outlined"

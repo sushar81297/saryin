@@ -35,7 +35,6 @@ const CreditDialog = ({ visible, onDismiss, onSubmit }) => {
         <Dialog.Content>
           <TextInput
             label="ဆပ်ငွေပမာဏ"
-            value={creditAmount}
             onChangeText={setCreditAmount}
             keyboardType="numeric"
             mode="outlined"

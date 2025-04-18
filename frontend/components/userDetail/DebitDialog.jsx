@@ -35,7 +35,6 @@ const DebitDialog = ({ visible, onDismiss, onSubmit }) => {
         <Dialog.Content>
           <TextInput
             label="အကြွေး ပမာဏ"
-            value={debitAmount}
             onChangeText={setDebitAmount}
             keyboardType="numeric"
             mode="outlined"
