@@ -35,16 +35,20 @@ router.get("/", async (req, res) => {
     const { name, phoneNumber } = req.query;
     const filter = {};
 
-    // Add name filter (case-insensitive partial match)
-    if (name) {
-      filter.name = { $regex: name, $options: "i" };
-    }
+    // Create OR condition if either name or phoneNumber is provided
+    if (name || phoneNumber) {
+      filter.$or = [];
 
-    // Add phone number filter (case-insensitive partial match)
-    if (phoneNumber) {
-      filter.phoneNumber = { $regex: phoneNumber, $options: "i" };
-    }
+      if (name) {
+        filter.$or.push({ name: { $regex: name, $options: "i" } });
+      }
 
+      if (phoneNumber) {
+        filter.$or.push({
+          phoneNumber: { $regex: phoneNumber, $options: "i" },
+        });
+      }
+    }
     const totalUsers = await User.countDocuments(filter);
     const users = await User.find(filter)
       .populate("balance")
@@ -69,7 +73,10 @@ router.get("/", async (req, res) => {
 // Get a specific user by ID
 router.get("/:id", async (req, res) => {
   try {
-    const user = await User.findById(req.params.id).populate("balance");
+    const user = await User.findById(req.params.id).populate({
+      path: "balance",
+      options: { sort: { createdAt: -1 } }, // Sort balance in descending order by createdAt
+    });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -90,7 +97,7 @@ router.put("/:id", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
     const credit = totalCredit || user.totalCredit;
-    const debit = totalDebit - user.totalDebit;
+    const debit = totalDebit || user.totalDebit;
     const payload = {
       name: name || user.name,
       phoneNumber: phoneNumber || user.phoneNumber,
@@ -146,12 +153,11 @@ router.post("/:id/balance", async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    const { credit, debit, paidStatus } = req.body;
+    const { credit, debit } = req.body;
 
     const newBalance = new Balance({
       credit: credit || 0,
       debit: debit || 0,
-      paidStatus: paidStatus || "notPaid",
     });
 
     const savedBalance = await newBalance.save();
@@ -170,35 +176,6 @@ router.post("/:id/balance", async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({ message: error.message });
-  }
-});
-
-// Get user's balance summary
-router.get("/:id/summary", async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id).populate("balance");
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const paidBalances = user.balance.filter((b) => b.paidStatus === "paided");
-    const unpaidBalances = user.balance.filter(
-      (b) => b.paidStatus === "notPaid"
-    );
-
-    res.status(200).json({
-      userId: user._id,
-      userName: user.name,
-      totalCredit: user.totalCredit,
-      totalDebit: user.totalDebit,
-      totalAmount: user.totalAmount,
-      paidBalancesCount: paidBalances.length,
-      unpaidBalancesCount: unpaidBalances.length,
-      totalBalancesCount: user.balance.length,
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
   }
 });
 

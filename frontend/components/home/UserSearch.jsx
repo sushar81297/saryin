@@ -3,7 +3,12 @@ import { StyleSheet, View } from "react-native";
 
 import React from "react";
 
-const UserSearch = ({ searchQuery, setSearchQuery, handleSearch }) => {
+const UserSearch = ({
+  searchQuery,
+  setSearchQuery,
+  handleSearch,
+  handleClearSearch,
+}) => {
   return (
     <View style={styles.searchContainer}>
       <Searchbar
@@ -12,6 +17,7 @@ const UserSearch = ({ searchQuery, setSearchQuery, handleSearch }) => {
         value={searchQuery}
         onSubmitEditing={handleSearch}
         style={styles.searchBar}
+        onClearIconPress={handleClearSearch}
       />
       <IconButton
         icon="magnify"

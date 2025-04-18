@@ -20,7 +20,7 @@ import React, { useState } from "react";
 import UserDeleteDialog from "./UserDeleteDialog";
 import axios from "axios";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+const API_URL = "https://fcc9-119-8-42-125.ngrok-free.app/api";
 
 const UserList = ({ users, loading, navigation, onRefresh }) => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -76,16 +76,10 @@ const UserList = ({ users, loading, navigation, onRefresh }) => {
               {item.phoneNumber && <Paragraph>{item.phoneNumber}</Paragraph>}
               <View style={styles.financialInfo}>
                 <Paragraph>
-                  <Text style={styles.label}>Credit:</Text>{" "}
-                  {item.totalCredit || 0}
-                </Paragraph>
-                <Paragraph>
-                  <Text style={styles.label}>Debit:</Text>{" "}
-                  {item.totalDebit || 0}
-                </Paragraph>
-                <Paragraph>
-                  <Text style={styles.label}>Balance:</Text>{" "}
-                  {item.totalRemain || 0}
+                  <Text style={styles.label}>
+                    {Math.abs(item.totalAmount)} ကျပ်{" "}
+                    {`(${item.totalAmount >= 0 ? "ချန်ထားငွေ" : "အကြွေး"})`}
+                  </Text>
                 </Paragraph>
               </View>
             </View>

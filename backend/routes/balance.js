@@ -6,7 +6,7 @@ const User = require("../models/User");
 // Create a new balance entry
 router.post("/", async (req, res) => {
   try {
-    const { credit, debit, paidStatus, userId } = req.body;
+    const { credit, debit, userId } = req.body;
 
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
@@ -15,7 +15,6 @@ router.post("/", async (req, res) => {
     const newBalance = new Balance({
       credit: credit || 0,
       debit: debit || 0,
-      paidStatus: paidStatus || "notPaid",
     });
 
     const savedBalance = await newBalance.save();
@@ -68,7 +67,7 @@ router.get("/:id", async (req, res) => {
 // Update a balance entry
 router.put("/:id", async (req, res) => {
   try {
-    const { credit, debit, paidStatus, userId } = req.body;
+    const { credit, debit } = req.body;
 
     const balance = await Balance.findById(req.params.id);
     if (!balance) {
@@ -92,28 +91,9 @@ router.put("/:id", async (req, res) => {
 
     const updatedBalance = await Balance.findByIdAndUpdate(
       req.params.id,
-      { credit, debit, paidStatus },
+      { credit, debit },
       { new: true }
     );
-
-    res.status(200).json(updatedBalance);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// Update payment status
-router.patch("/:id/payment", async (req, res) => {
-  try {
-    const { paidStatus } = req.body;
-    const balance = await Balance.findById(req.params.id);
-
-    if (!balance) {
-      return res.status(404).json({ message: "Balance not found" });
-    }
-
-    balance.paidStatus = paidStatus || balance.paidStatus;
-    const updatedBalance = await balance.save();
 
     res.status(200).json(updatedBalance);
   } catch (error) {
@@ -147,41 +127,6 @@ router.delete("/:id", async (req, res) => {
 
     await Balance.findByIdAndDelete(req.params.id);
     res.status(200).json({ message: "Balance deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// Get total balance summary
-router.get("/summary/total", async (req, res) => {
-  try {
-    const balances = await Balance.find();
-
-    let totalCredit = 0;
-    let totalDebit = 0;
-    let totalPaid = 0;
-    let totalNotPaid = 0;
-
-    balances.forEach((balance) => {
-      totalCredit += balance.credit || 0;
-      totalDebit += balance.debit || 0;
-
-      if (balance.paidStatus === "paided") {
-        totalPaid += balance.debit || 0;
-      } else {
-        totalNotPaid += balance.debit || 0;
-      }
-    });
-
-    const netBalance = totalCredit - totalDebit;
-
-    res.status(200).json({
-      totalCredit,
-      totalDebit,
-      totalPaid,
-      totalNotPaid,
-      netBalance,
-    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

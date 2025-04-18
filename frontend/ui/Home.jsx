@@ -8,7 +8,7 @@ import UserRegistrationDialog from "../components/home/UserRegistrationDialog";
 import UserSearch from "../components/home/UserSearch";
 import axios from "axios";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+const API_URL = "https://fcc9-119-8-42-125.ngrok-free.app/api";
 
 const HomeScreen = ({ navigation }) => {
   const [users, setUsers] = useState([]);
@@ -94,7 +94,7 @@ const HomeScreen = ({ navigation }) => {
 
   const handleRegisterUser = async () => {
     if (!newUser.name.trim()) {
-      setRegistrationError("Name is required");
+      setRegistrationError("နာမည်ထည့်ရန် လိုအပ်ပါသည်");
       return;
     }
 
@@ -102,7 +102,19 @@ const HomeScreen = ({ navigation }) => {
     setRegistrationError("");
 
     try {
-      await axios.post(`${API_URL}/users`, newUser);
+      const res = await axios.post(`${API_URL}/users`, {
+        ...newUser,
+        totalCredit: 0,
+        totalDebit: 0,
+      });
+      if (res.data?._id) {
+        await axios.post(`${API_URL}/balance`, {
+          credit: parseFloat(newUser.totalCredit),
+          debit: parseFloat(newUser.totalDebit),
+          userId: res.data?._id,
+        });
+      }
+
       fetchUsers(1, nameFilter, phoneFilter);
       hideDialog();
     } catch (error) {

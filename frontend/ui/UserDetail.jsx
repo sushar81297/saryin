@@ -5,16 +5,24 @@ import {
   StyleSheet,
   View,
 } from "react-native";
-import { Avatar, Card, Paragraph, Text, Title } from "react-native-paper";
+import {
+  Avatar,
+  Card,
+  IconButton,
+  Paragraph,
+  Text,
+  Title,
+} from "react-native-paper";
 import React, { useEffect, useState } from "react";
 
 import CreditDialog from "../components/userDetail/CreditDialog";
 import DebitDialog from "../components/userDetail/DebitDialog";
+import EditUserDialog from "../components/userDetail/EditUserDialog";
 import TransactionHistory from "../components/userDetail/TransactionHistory";
 import UserSummary from "../components/userDetail/UserSummary";
 import axios from "axios";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+const API_URL = "https://fcc9-119-8-42-125.ngrok-free.app/api";
 
 const UserDetailScreen = ({ route }) => {
   const { userId } = route.params;
@@ -23,6 +31,7 @@ const UserDetailScreen = ({ route }) => {
   const [error, setError] = useState(null);
   const [creditDialogVisible, setCreditDialogVisible] = useState(false);
   const [debitDialogVisible, setDebitDialogVisible] = useState(false);
+  const [editDialogVisible, setEditDialogVisible] = useState(false);
 
   useEffect(() => {
     fetchUserDetails();
@@ -70,6 +79,20 @@ const UserDetailScreen = ({ route }) => {
     }
   };
 
+  const handleEditUser = async (name, phoneNumber) => {
+    try {
+      await axios.put(`${API_URL}/users/${userId}`, {
+        name,
+        phoneNumber,
+      });
+      fetchUserDetails();
+      setEditDialogVisible(false);
+    } catch (err) {
+      console.error("Error updating user:", err);
+      Alert.alert("Error", "Failed to update user information");
+    }
+  };
+
   if (loading) {
     return (
       <View style={styles.centered}>
@@ -110,11 +133,16 @@ const UserDetailScreen = ({ route }) => {
               <Title style={styles.name}>{user.name}</Title>
               <Paragraph style={styles.phone}>{user.phoneNumber}</Paragraph>
             </View>
+            <IconButton
+              icon="pencil"
+              size={24}
+              onPress={() => setEditDialogVisible(true)}
+            />
           </View>
 
           {user.remark && (
             <Card.Content style={styles.section}>
-              <Title style={styles.sectionTitle}>Remarks</Title>
+              <Title style={styles.sectionTitle}>မှတ်ချက်</Title>
               <Paragraph>{user.remark}</Paragraph>
             </Card.Content>
           )}
@@ -125,7 +153,10 @@ const UserDetailScreen = ({ route }) => {
             onDebitPress={() => setDebitDialogVisible(true)}
           />
 
-          <TransactionHistory balances={user.balance} />
+          <TransactionHistory
+            balances={user.balance}
+            onBalanceDeleted={fetchUserDetails}
+          />
         </Card>
       </ScrollView>
 
@@ -139,6 +170,13 @@ const UserDetailScreen = ({ route }) => {
         visible={debitDialogVisible}
         onDismiss={() => setDebitDialogVisible(false)}
         onSubmit={handleAddDebit}
+      />
+
+      <EditUserDialog
+        visible={editDialogVisible}
+        onDismiss={() => setEditDialogVisible(false)}
+        onSubmit={handleEditUser}
+        user={user}
       />
     </>
   );

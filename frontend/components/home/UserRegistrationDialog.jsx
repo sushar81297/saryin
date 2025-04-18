@@ -26,14 +26,14 @@ const UserRegistrationDialog = ({
         <Dialog.Title>အသစ်ထည့်ရန်</Dialog.Title>
         <Dialog.Content>
           <TextInput
-            label="နာမည်မည်"
+            label="နာမည်"
             value={newUser.name}
             onChangeText={(text) => handleInputChange("name", text)}
             style={styles.input}
             mode="outlined"
           />
           <TextInput
-            label="ဖုန်းနံပါတ်တ်"
+            label="ဖုန်းနံပါတ်"
             value={newUser.phoneNumber}
             onChangeText={(text) => handleInputChange("phoneNumber", text)}
             style={styles.input}
@@ -43,7 +43,7 @@ const UserRegistrationDialog = ({
 
           <Text style={styles.radioLabel}>‌ငွေစာရင်း အမျိုးအစား :</Text>
           <RadioButton.Group
-            onValueChange={(value) => setTansactionType(value)}
+            onValueChange={(value) => setTransactionType(value)}
             value={transactionType || "debit"}
           >
             <View style={styles.radioContainer}>
@@ -60,7 +60,7 @@ const UserRegistrationDialog = ({
 
           {transactionType === "credit" ? (
             <TextInput
-              label="အကြွေး"
+              label="ဆပ်ငွေ"
               value={newUser.creditAmount}
               onChangeText={(text) => handleInputChange("totalCredit", text)}
               style={styles.input}
@@ -69,7 +69,7 @@ const UserRegistrationDialog = ({
             />
           ) : (
             <TextInput
-              label="ဆပ်ငွေ"
+              label="အကြွေး"
               value={newUser.debitAmount}
               onChangeText={(text) => handleInputChange("totalDebit", text)}
               style={styles.input}
@@ -79,7 +79,7 @@ const UserRegistrationDialog = ({
           )}
 
           <TextInput
-            label="မှတ်ချက်မှတ်ချက်"
+            label="မှတ်ချက်"
             value={newUser.remark}
             onChangeText={(text) => handleInputChange("remark", text)}
             style={styles.input}
@@ -92,7 +92,7 @@ const UserRegistrationDialog = ({
           ) : null}
         </Dialog.Content>
         <Dialog.Actions>
-          <Button onPress={hideDialog}>ဖျက်ရန်ဖျက်ရန်</Button>
+          <Button onPress={hideDialog}>ဖျက်သိမ်းမည် </Button>
           <Button
             onPress={handleRegisterUser}
             loading={registering}

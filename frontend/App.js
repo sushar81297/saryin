@@ -32,7 +32,7 @@ export default function App() {
           <Stack.Screen
             name="UserDetail"
             component={UserDetailScreen}
-            options={{ title: "စာရင်း အသေစိတ်" }}
+            options={{ title: "စာရင်း အသေးစိတ်" }}
           />
         </Stack.Navigator>
       </NavigationContainer>
