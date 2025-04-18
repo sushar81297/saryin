@@ -20,7 +20,7 @@ import React, { useState } from "react";
 import UserDeleteDialog from "./UserDeleteDialog";
 import axios from "axios";
 
-const API_URL = "https://fcc9-119-8-42-125.ngrok-free.app/api";
+const API_URL = "https://ea4c-119-8-42-125.ngrok-free.app/api";
 
 const UserList = ({ users, loading, navigation, onRefresh }) => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 
 const DebitDialog = ({ visible, onDismiss, onSubmit }) => {
   const [debitAmount, setDebitAmount] = useState("");
+  const [remark, setRemark] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -14,8 +15,9 @@ const DebitDialog = ({ visible, onDismiss, onSubmit }) => {
 
     setLoading(true);
     try {
-      await onSubmit(debitAmount);
+      await onSubmit({ debitAmount, remark });
       setDebitAmount("");
+      setRemark("");
     } catch (error) {
       console.error(error);
     } finally {
@@ -37,6 +39,14 @@ const DebitDialog = ({ visible, onDismiss, onSubmit }) => {
             label="အကြွေး ပမာဏ"
             onChangeText={setDebitAmount}
             keyboardType="numeric"
+            mode="outlined"
+            style={styles.dialogInput}
+          />
+        </Dialog.Content>
+        <Dialog.Content>
+          <TextInput
+            label="မှတ်ချက်"
+            onChangeText={setRemark}
             mode="outlined"
             style={styles.dialogInput}
           />

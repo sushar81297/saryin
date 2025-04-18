@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import TransactionDeleteDialog from "./TransactionDeleteDialog";
 import axios from "axios";
 
-const API_URL = "https://fcc9-119-8-42-125.ngrok-free.app/api";
+const API_URL = "https://ea4c-119-8-42-125.ngrok-free.app/api";
 
 const TransactionHistory = ({ balances, onBalanceDeleted }) => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -48,17 +48,16 @@ const TransactionHistory = ({ balances, onBalanceDeleted }) => {
           balances.map((balance, index) => (
             <View key={index} style={styles.balanceItem}>
               <View style={styles.balanceHeader}>
-                <Text style={styles.balanceDate}>
-                  {new Date(balance.createdAt).toLocaleString("en-US", {
-                    year: "numeric",
-                    month: "numeric",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    hour12: true,
-                  })}
-                </Text>
+                {balance.credit > 0 && (
+                  <Text style={styles.creditText}>
+                    ဆပ်ငွေ : {balance.credit} ကျပ်
+                  </Text>
+                )}
+                {balance.debit > 0 && (
+                  <Text style={styles.debitText}>
+                    အကြွေး : {balance.debit} ကျပ်
+                  </Text>
+                )}
                 <IconButton
                   icon="delete"
                   size={20}
@@ -66,16 +65,22 @@ const TransactionHistory = ({ balances, onBalanceDeleted }) => {
                   style={styles.deleteButton}
                 />
               </View>
-              {balance.credit > 0 && (
-                <Text style={styles.creditText}>
-                  ဆပ်ငွေ : {balance.credit} ကျပ်
+              {balance.remark && (
+                <Text style={styles.balanceDate}>
+                  မှတ်ချက် : {balance.remark}
                 </Text>
               )}
-              {balance.debit > 0 && (
-                <Text style={styles.debitText}>
-                  အကြွေး : {balance.debit} ကျပ်
-                </Text>
-              )}
+              <Text style={styles.balanceDate}>
+                {new Date(balance.createdAt).toLocaleString("en-US", {
+                  year: "numeric",
+                  month: "numeric",
+                  day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                  hour12: true,
+                })}
+              </Text>
             </View>
           ))
         ) : (

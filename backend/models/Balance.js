@@ -11,6 +11,9 @@ const balanceSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    remark: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

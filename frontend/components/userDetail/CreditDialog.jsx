@@ -4,6 +4,7 @@ import React, { useState } from "react";
 
 const CreditDialog = ({ visible, onDismiss, onSubmit }) => {
   const [creditAmount, setCreditAmount] = useState("");
+  const [remark, setRemark] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -14,8 +15,9 @@ const CreditDialog = ({ visible, onDismiss, onSubmit }) => {
 
     setLoading(true);
     try {
-      await onSubmit(creditAmount);
+      await onSubmit({ creditAmount, remark });
       setCreditAmount("");
+      setRemark("");
     } catch (error) {
       console.error(error);
     } finally {
@@ -37,6 +39,14 @@ const CreditDialog = ({ visible, onDismiss, onSubmit }) => {
             label="ဆပ်ငွေပမာဏ"
             onChangeText={setCreditAmount}
             keyboardType="numeric"
+            mode="outlined"
+            style={styles.dialogInput}
+          />
+        </Dialog.Content>
+        <Dialog.Content>
+          <TextInput
+            label="မှတ်ချက်"
+            onChangeText={setRemark}
             mode="outlined"
             style={styles.dialogInput}
           />

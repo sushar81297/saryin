@@ -12,13 +12,13 @@ const UserSummary = ({ user, onCreditPress, onDebitPress }) => {
         </Title>
         <View style={styles.balanceSummary}>
           <Text style={styles.summaryItem}>
-            ပြန်ဆပ်ငွေ : {user.totalCredit || 0} ကျပ်
+            ချေးငွေ : {user.totalDebit || 0} ကျပ်
           </Text>
           <Text style={styles.summaryItem}>
-            ချေးယူထားငွေ : {user.totalDebit || 0} ကျပ်
+            ဆပ်ငွေ : {user.totalCredit || 0} ကျပ်
           </Text>
           <Text style={[styles.summaryItem, styles.totalAmount]}>
-            လက်ကျန်ငွေ : {Math.abs(user.totalAmount)} ကျပ်{" "}
+            ကျန်ငွေ : {Math.abs(user.totalAmount)} ကျပ်{" "}
             {`(${user.totalAmount >= 0 ? "ချန်ထားငွေ" : "အကြွေး"})`}
           </Text>
         </View>

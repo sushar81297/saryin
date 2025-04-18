@@ -22,7 +22,7 @@ import TransactionHistory from "../components/userDetail/TransactionHistory";
 import UserSummary from "../components/userDetail/UserSummary";
 import axios from "axios";
 
-const API_URL = "https://fcc9-119-8-42-125.ngrok-free.app/api";
+const API_URL = "https://ea4c-119-8-42-125.ngrok-free.app/api";
 
 const UserDetailScreen = ({ route }) => {
   const { userId } = route.params;
@@ -49,12 +49,13 @@ const UserDetailScreen = ({ route }) => {
     }
   };
 
-  const handleAddCredit = async (amount) => {
+  const handleAddCredit = async (data) => {
     try {
       await axios.post(`${API_URL}/balance`, {
-        credit: parseFloat(amount),
+        credit: parseFloat(data.creditAmount),
         debit: 0,
         userId: userId,
+        remark: data.remark,
       });
       fetchUserDetails();
       setCreditDialogVisible(false);
@@ -64,12 +65,13 @@ const UserDetailScreen = ({ route }) => {
     }
   };
 
-  const handleAddDebit = async (amount) => {
+  const handleAddDebit = async (data) => {
     try {
       await axios.post(`${API_URL}/balance`, {
         credit: 0,
-        debit: parseFloat(amount),
+        debit: parseFloat(data.debitAmount),
         userId: userId,
+        remark: data.remark,
       });
       fetchUserDetails();
       setDebitDialogVisible(false);
@@ -140,12 +142,12 @@ const UserDetailScreen = ({ route }) => {
             />
           </View>
 
-          {user.remark && (
+          {/* {user.remark && (
             <Card.Content style={styles.section}>
               <Title style={styles.sectionTitle}>မှတ်ချက်</Title>
               <Paragraph>{user.remark}</Paragraph>
             </Card.Content>
-          )}
+          )} */}
 
           <UserSummary
             user={user}

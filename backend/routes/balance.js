@@ -6,7 +6,7 @@ const User = require("../models/User");
 // Create a new balance entry
 router.post("/", async (req, res) => {
   try {
-    const { credit, debit, userId } = req.body;
+    const { credit, debit, remark, userId } = req.body;
 
     if (!userId) {
       return res.status(400).json({ message: "User ID is required" });
@@ -15,6 +15,7 @@ router.post("/", async (req, res) => {
     const newBalance = new Balance({
       credit: credit || 0,
       debit: debit || 0,
+      remark,
     });
 
     const savedBalance = await newBalance.save();
@@ -67,7 +68,7 @@ router.get("/:id", async (req, res) => {
 // Update a balance entry
 router.put("/:id", async (req, res) => {
   try {
-    const { credit, debit } = req.body;
+    const { credit, debit, remark } = req.body;
 
     const balance = await Balance.findById(req.params.id);
     if (!balance) {
@@ -91,7 +92,7 @@ router.put("/:id", async (req, res) => {
 
     const updatedBalance = await Balance.findByIdAndUpdate(
       req.params.id,
-      { credit, debit },
+      { credit, debit, remark },
       { new: true }
     );
 

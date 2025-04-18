@@ -8,7 +8,7 @@ import UserRegistrationDialog from "../components/home/UserRegistrationDialog";
 import UserSearch from "../components/home/UserSearch";
 import axios from "axios";
 
-const API_URL = "https://fcc9-119-8-42-125.ngrok-free.app/api";
+const API_URL = "https://ea4c-119-8-42-125.ngrok-free.app/api";
 
 const HomeScreen = ({ navigation }) => {
   const [users, setUsers] = useState([]);
