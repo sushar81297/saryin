@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import TransactionDeleteDialog from "./TransactionDeleteDialog";
 import axios from "axios";
 
-const API_URL = "https://ea4c-119-8-42-125.ngrok-free.app/api";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const TransactionHistory = ({ balances, onBalanceDeleted }) => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);

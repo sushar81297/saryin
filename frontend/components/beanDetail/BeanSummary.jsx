@@ -10,14 +10,14 @@ const UserSummary = ({ user, onCreditPress, onDebitPress }) => {
         <Title style={styles.sectionTitle}>အနှစ်ချုပ်</Title>
         <View style={styles.balanceSummary}>
           <Text style={styles.summaryItem}>
-            Add Bean : {user.totalCredit || 0} Tin
+            အပ်ပဲ : {user.totalCredit || 0} တင်း
           </Text>
           <Text style={styles.summaryItem}>
-            Sell Bean : {user.totalDebit || 0} Tin
+            ရောင်းပဲ : {user.totalDebit || 0} တင်း
           </Text>
           <Text style={[styles.summaryItem, styles.totalAmount]}>
-            Remin Bean : {Math.abs(user.totalAmount)} Tin
-            {`(${user.totalAmount >= 0 ? "Add Bean" : "Sell Bean"})`}
+            လက်ကျန် : {Math.abs(user.totalAmount)} တင်း{" "}
+            {`(${user.totalAmount >= 0 ? "အပ်ပဲ" : "ရရန်ပဲ"})`}
           </Text>
         </View>
       </Card.Content>
@@ -28,14 +28,14 @@ const UserSummary = ({ user, onCreditPress, onDebitPress }) => {
           onPress={onCreditPress}
           style={[styles.actionButton, styles.creditButton]}
         >
-          Add Bean
+          ပဲအပ်မည်
         </Button>
         <Button
           mode="contained"
           onPress={onDebitPress}
           style={[styles.actionButton, styles.debitButton]}
         >
-          Sell Bean
+          ပဲရောင်းမည်
         </Button>
       </Card.Content>
     </>

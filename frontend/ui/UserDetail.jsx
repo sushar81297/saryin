@@ -26,7 +26,7 @@ import TransactionHistory from "../components/userDetail/TransactionHistory";
 import UserSummary from "../components/userDetail/UserSummary";
 import axios from "axios";
 
-const API_URL = "https://ea4c-119-8-42-125.ngrok-free.app/api";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const UserDetailScreen = ({ route }) => {
   const { userId } = route.params;
@@ -70,7 +70,6 @@ const UserDetailScreen = ({ route }) => {
   };
 
   const handleAddDebit = async (data) => {
-    console.log(parseFloat(data.currentPrice), "data");
     try {
       await axios.post(`${API_URL}/balance`, {
         credit: 0,

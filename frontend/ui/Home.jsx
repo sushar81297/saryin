@@ -9,7 +9,7 @@ import UserRegistrationDialog from "../components/home/UserRegistrationDialog";
 import UserSearch from "../components/home/UserSearch";
 import axios from "axios";
 
-const API_URL = "https://ea4c-119-8-42-125.ngrok-free.app/api";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const HomeScreen = ({ navigation }) => {
   const [users, setUsers] = useState([]);
@@ -165,7 +165,7 @@ const HomeScreen = ({ navigation }) => {
           onPress={showDialog}
           style={styles.addButton}
         >
-          စာရင်းအသစ်ထည့်ရန်
+          ငွေစာရင်းအသစ်ထည့်ရန်
         </Button>
 
         <Button
@@ -174,7 +174,7 @@ const HomeScreen = ({ navigation }) => {
           onPress={showBeanDialog}
           style={styles.addButton}
         >
-          Add Bean List
+          ပဲစာရင်းအသစ်ထည့်ရန်
         </Button>
 
         <UserSearch

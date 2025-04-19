@@ -34,10 +34,10 @@ const BeanDebitDialog = ({ visible, onDismiss, onSubmit }) => {
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={handleDismiss}>
-        <Dialog.Title>Add Debit</Dialog.Title>
+        <Dialog.Title>ပဲရောင်းမည်</Dialog.Title>
         <Dialog.Content>
           <TextInput
-            label="Sell Bean"
+            label="တင်း ပမာဏ"
             onChangeText={setDebitAmount}
             keyboardType="numeric"
             mode="outlined"
@@ -46,7 +46,7 @@ const BeanDebitDialog = ({ visible, onDismiss, onSubmit }) => {
         </Dialog.Content>
         <Dialog.Content>
           <TextInput
-            label="Current Price"
+            label="လက်တလော စျေးနုန်း"
             onChangeText={setCurrentPrice}
             keyboardType="numeric"
             mode="outlined"
@@ -64,7 +64,7 @@ const BeanDebitDialog = ({ visible, onDismiss, onSubmit }) => {
         <Dialog.Actions>
           <Button onPress={handleDismiss}>ဖျက်သိမ်းမည်</Button>
           <Button onPress={handleSubmit} loading={loading} disabled={loading}>
-            အကြွေးယူမည်
+            ပဲရောင်းမည်
           </Button>
         </Dialog.Actions>
       </Dialog>

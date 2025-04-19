@@ -33,10 +33,10 @@ const BeanCreditDialog = ({ visible, onDismiss, onSubmit }) => {
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={handleDismiss}>
-        <Dialog.Title>Add Credit</Dialog.Title>
+        <Dialog.Title>ပဲအပ်ရန်</Dialog.Title>
         <Dialog.Content>
           <TextInput
-            label="Add Bean"
+            label="တင်း ပမာဏ"
             onChangeText={setCreditAmount}
             keyboardType="numeric"
             mode="outlined"
@@ -54,7 +54,7 @@ const BeanCreditDialog = ({ visible, onDismiss, onSubmit }) => {
         <Dialog.Actions>
           <Button onPress={handleDismiss}>ဖျက်သိမ်းမည်</Button>
           <Button onPress={handleSubmit} loading={loading} disabled={loading}>
-            အကြွေးပေးမည်
+            ပဲအပ်မည်
           </Button>
         </Dialog.Actions>
       </Dialog>

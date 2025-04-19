@@ -5,7 +5,7 @@ import { StyleSheet, View } from "react-native";
 import TransactionDeleteDialog from "./TransactionDeleteDialog";
 import axios from "axios";
 
-const API_URL = "https://ea4c-119-8-42-125.ngrok-free.app/api";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const BeanTransactionHistory = ({ balances, onBalanceDeleted }) => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -40,7 +40,6 @@ const BeanTransactionHistory = ({ balances, onBalanceDeleted }) => {
     }
   };
 
-  console.log(balances, "balances");
   return (
     <>
       <Card.Content style={styles.section}>
@@ -51,12 +50,12 @@ const BeanTransactionHistory = ({ balances, onBalanceDeleted }) => {
               <View style={styles.balanceHeader}>
                 {balance.credit > 0 && (
                   <Text style={styles.creditText}>
-                    Add Bean : {balance.credit} tin
+                    အပ်ပဲ : {balance.credit} တင်း
                   </Text>
                 )}
                 {balance.debit > 0 && (
                   <Text style={styles.debitText}>
-                    Sell Bean : {balance.debit} tin
+                    ရောင်းပဲ : {balance.debit} တင်း
                   </Text>
                 )}
                 <IconButton
@@ -77,15 +76,7 @@ const BeanTransactionHistory = ({ balances, onBalanceDeleted }) => {
                 </Text>
               )}
               <Text style={styles.balanceDate}>
-                {new Date(balance.createdAt).toLocaleString("en-US", {
-                  year: "numeric",
-                  month: "numeric",
-                  day: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  second: "2-digit",
-                  hour12: true,
-                })}
+                {new Date(balance.createdAt).toLocaleString()}
               </Text>
             </View>
           ))
