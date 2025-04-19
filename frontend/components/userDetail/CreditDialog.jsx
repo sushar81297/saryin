@@ -33,7 +33,7 @@ const CreditDialog = ({ visible, onDismiss, onSubmit }) => {
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={handleDismiss}>
-        <Dialog.Title>Add Credit</Dialog.Title>
+        <Dialog.Title>အကြွေးပေးရန်</Dialog.Title>
         <Dialog.Content>
           <TextInput
             label="ဆပ်ငွေပမာဏ"

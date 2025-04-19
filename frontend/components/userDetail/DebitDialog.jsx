@@ -33,7 +33,7 @@ const DebitDialog = ({ visible, onDismiss, onSubmit }) => {
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={handleDismiss}>
-        <Dialog.Title>Add Debit</Dialog.Title>
+        <Dialog.Title>အကြွေးယူရန်</Dialog.Title>
         <Dialog.Content>
           <TextInput
             label="အကြွေး ပမာဏ"

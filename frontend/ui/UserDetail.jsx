@@ -13,7 +13,7 @@ import {
   Text,
   Title,
 } from "react-native-paper";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 import BeanCreditDialog from "../components/beanDetail/CreditDialog";
 import BeanDebitDialog from "../components/beanDetail/DebitDialog";
@@ -25,6 +25,7 @@ import EditUserDialog from "../components/userDetail/EditUserDialog";
 import TransactionHistory from "../components/userDetail/TransactionHistory";
 import UserSummary from "../components/userDetail/UserSummary";
 import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -40,6 +41,15 @@ const UserDetailScreen = ({ route }) => {
   useEffect(() => {
     fetchUserDetails();
   }, [userId]);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserDetails();
+      return () => {
+        // Optional cleanup if needed
+      };
+    }, [userId])
+  );
 
   const fetchUserDetails = async () => {
     try {

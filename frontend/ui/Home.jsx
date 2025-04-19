@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import BeanRegistrationDialog from "../components/bean/BeanRegistrationDialog";
@@ -8,6 +8,7 @@ import UserPagination from "../components/home/UserPagination";
 import UserRegistrationDialog from "../components/home/UserRegistrationDialog";
 import UserSearch from "../components/home/UserSearch";
 import axios from "axios";
+import { useFocusEffect } from "@react-navigation/native";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -59,6 +60,15 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     fetchUsers();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      fetchUsers();
+      return () => {
+        // Optional cleanup if needed
+      };
+    }, [])
+  );
 
   const handleSearch = () => {
     setNameFilter(searchQuery);

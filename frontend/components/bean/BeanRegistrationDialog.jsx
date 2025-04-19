@@ -48,17 +48,17 @@ const BeanRegistrationDialog = ({
               <View style={styles.radioOption}>
                 <View style={styles.radioOption}>
                   <RadioButton value="credit" />
-                  <Text>Add Bean</Text>
+                  <Text>ပဲအပ်မည်</Text>
                 </View>
                 <RadioButton value="debit" />
-                <Text>Sell Bean</Text>
+                <Text>ပဲရောင်းမည်</Text>
               </View>
             </View>
           </RadioButton.Group>
 
           {transactionType === "credit" ? (
             <TextInput
-              label="Quantity"
+              label="တင်း ပမာဏ"
               onChangeText={(text) => handleInputChange("totalCredit", text)}
               style={styles.input}
               mode="outlined"
@@ -66,7 +66,7 @@ const BeanRegistrationDialog = ({
             />
           ) : (
             <TextInput
-              label="Quantity"
+              label="တင်း ပမာဏ"
               onChangeText={(text) => handleInputChange("totalDebit", text)}
               style={styles.input}
               mode="outlined"
@@ -75,7 +75,7 @@ const BeanRegistrationDialog = ({
           )}
 
           <TextInput
-            label="Current Price"
+            label="လက်တလော စျေးနုန်း"
             onChangeText={(text) => handleInputChange("currentPrice", text)}
             style={styles.input}
             mode="outlined"
