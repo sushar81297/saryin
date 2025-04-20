@@ -2,24 +2,39 @@ import { Card, IconButton, Paragraph, Text, Title } from "react-native-paper";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
+import BeanTransactionUpdateDialog from "./BeanTransactionUpdateDialog";
 import TransactionDeleteDialog from "./TransactionDeleteDialog";
 import axios from "axios";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-const BeanTransactionHistory = ({ balances, onBalanceDeleted }) => {
+const BeanTransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [selectedBalanceId, setSelectedBalanceId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [editDialogVisible, setEditDialogVisible] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedEdit, setSelectedEdit] = useState(null);
 
   const showDeleteDialog = (balanceId) => {
     setSelectedBalanceId(balanceId);
     setDeleteDialogVisible(true);
   };
 
+  const showEditDialog = (balance) => {
+    setSelectedEdit(balance);
+    setEditDialogVisible(true);
+  };
+
   const hideDeleteDialog = () => {
     setDeleteDialogVisible(false);
     setSelectedBalanceId(null);
+  };
+
+  const hideEditDialog = () => {
+    setEditDialogVisible(false);
+    setSelectedEdit(null);
   };
 
   const handleDeleteBalance = async () => {
@@ -37,6 +52,34 @@ const BeanTransactionHistory = ({ balances, onBalanceDeleted }) => {
       console.error("Error deleting transaction:", error);
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleEditBalance = async (data) => {
+    if (!selectedEdit || !selectedEdit._id) return;
+
+    try {
+      setIsEditing(true);
+      let payload = { userId };
+      if (data.amount) {
+        if (selectedEdit.credit) {
+          payload.credit = parseFloat(data.amount);
+        } else {
+          payload.debit = parseFloat(data.amount);
+        }
+      }
+      payload.remark = data.remark;
+      payload.currentPrice = parseFloat(data.currentPrice);
+      await axios.put(`${API_URL}/balance/${selectedEdit._id}`, payload);
+      hideEditDialog();
+      // Notify parent component to refresh data
+      if (onBalanceDeleted) {
+        onBalanceDeleted();
+      }
+    } catch (error) {
+      console.error("Error deleting transaction:", error);
+    } finally {
+      setIsEditing(false);
     }
   };
 
@@ -59,9 +102,17 @@ const BeanTransactionHistory = ({ balances, onBalanceDeleted }) => {
                   </Text>
                 )}
                 <IconButton
+                  icon="pencil"
+                  size={20}
+                  onPress={() => showEditDialog(balance)}
+                  iconColor="blue"
+                  style={styles.deleteButton}
+                />
+                <IconButton
                   icon="delete"
                   size={20}
                   onPress={() => showDeleteDialog(balance._id)}
+                  iconColor="red"
                   style={styles.deleteButton}
                 />
               </View>
@@ -90,6 +141,14 @@ const BeanTransactionHistory = ({ balances, onBalanceDeleted }) => {
         onDismiss={hideDeleteDialog}
         onConfirm={handleDeleteBalance}
         isDeleting={isDeleting}
+      />
+
+      <BeanTransactionUpdateDialog
+        visible={editDialogVisible}
+        onDismiss={hideEditDialog}
+        onSubmit={handleEditBalance}
+        isEditing={isEditing}
+        data={selectedEdit}
       />
     </>
   );
@@ -129,10 +188,12 @@ const styles = StyleSheet.create({
   creditText: {
     color: "#4CAF50",
     fontWeight: "bold",
+    width: "75%",
   },
   debitText: {
     color: "#F44336",
     fontWeight: "bold",
+    width: "75%",
   },
 });
 

@@ -146,10 +146,11 @@ const HomeScreen = ({ navigation }) => {
         totalCredit: 0,
         totalDebit: 0,
       });
-      if (res.data?._id) {
+      if (res.data?._id && (newUser.totalCredit || newUser.totalDebit)) {
         await axios.post(`${API_URL}/balance`, {
           credit: parseFloat(newUser.totalCredit),
           debit: parseFloat(newUser.totalDebit),
+          remark: newUser.remark || "",
           userId: res.data?._id,
         });
       }

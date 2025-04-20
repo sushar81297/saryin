@@ -68,7 +68,9 @@ const UserList = ({ users, loading, navigation, onRefresh }) => {
       <TouchableOpacity
         onPress={() => navigation.navigate("UserDetail", { userId: item._id })}
       >
-        <Card style={styles.userCard}>
+        <Card
+          style={item.type === "bean" ? styles.userCardBean : styles.userCard}
+        >
           <Card.Content style={styles.userCardContent}>
             <Avatar.Text size={50} label={initials} style={styles.avatar} />
             {item.type && item.type === "bean" ? (
@@ -92,7 +94,11 @@ const UserList = ({ users, loading, navigation, onRefresh }) => {
                   <Paragraph>
                     <Text style={styles.label}>
                       {Math.abs(item.totalAmount)} ကျပ်{" "}
-                      {`(${item.totalAmount >= 0 ? "ချန်ထားငွေ" : "အကြွေး"})`}
+                      {item.totalAmount >= 0 ? (
+                        <Text style={styles.hightlight2}>(ချန်ထားငွေ)</Text>
+                      ) : (
+                        <Text style={styles.hightlight1}>(အကြွေး)</Text>
+                      )}
                     </Text>
                   </Paragraph>
                 </View>
@@ -150,6 +156,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     elevation: 1,
   },
+  userCardBean: {
+    marginBottom: 8,
+    elevation: 1,
+    backgroundColor: "#f9ce96",
+  },
   userCardContent: {
     flexDirection: "row",
     alignItems: "center",
@@ -183,6 +194,14 @@ const styles = StyleSheet.create({
   label: {
     fontWeight: "bold",
     marginRight: 5,
+  },
+  hightlight1: {
+    fontWeight: "bold",
+    color: "#FF5252",
+  },
+  hightlight2: {
+    fontWeight: "bold",
+    color: "#2196F3",
   },
 });
 

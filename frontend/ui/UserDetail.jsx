@@ -165,6 +165,7 @@ const UserDetailScreen = ({ route }) => {
                 onDebitPress={() => setDebitDialogVisible(true)}
               />
               <BeanTransactionHistory
+                userId={user._id}
                 balances={user.balance}
                 onBalanceDeleted={fetchUserDetails}
               />
@@ -178,6 +179,7 @@ const UserDetailScreen = ({ route }) => {
               />
 
               <TransactionHistory
+                userId={user._id}
                 balances={user.balance}
                 onBalanceDeleted={fetchUserDetails}
               />

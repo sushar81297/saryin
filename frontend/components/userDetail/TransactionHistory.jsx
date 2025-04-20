@@ -3,23 +3,38 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import TransactionDeleteDialog from "./TransactionDeleteDialog";
+import TransactionUpdateDialog from "./TransactionUpdateDialog";
 import axios from "axios";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
-const TransactionHistory = ({ balances, onBalanceDeleted }) => {
+const TransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [selectedBalanceId, setSelectedBalanceId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const [editDialogVisible, setEditDialogVisible] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedEdit, setSelectedEdit] = useState(null);
 
   const showDeleteDialog = (balanceId) => {
     setSelectedBalanceId(balanceId);
     setDeleteDialogVisible(true);
   };
 
+  const showEditDialog = (balance) => {
+    setSelectedEdit(balance);
+    setEditDialogVisible(true);
+  };
+
   const hideDeleteDialog = () => {
     setDeleteDialogVisible(false);
     setSelectedBalanceId(null);
+  };
+
+  const hideEditDialog = () => {
+    setEditDialogVisible(false);
+    setSelectedEdit(null);
   };
 
   const handleDeleteBalance = async () => {
@@ -37,6 +52,33 @@ const TransactionHistory = ({ balances, onBalanceDeleted }) => {
       console.error("Error deleting transaction:", error);
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleEditBalance = async (data) => {
+    if (!selectedEdit || !selectedEdit._id) return;
+
+    try {
+      setIsEditing(true);
+      let payload = { userId };
+      if (data.amount) {
+        if (selectedEdit.credit) {
+          payload.credit = parseFloat(data.amount);
+        } else {
+          payload.debit = parseFloat(data.amount);
+        }
+      }
+      payload.remark = data.remark;
+      await axios.put(`${API_URL}/balance/${selectedEdit._id}`, payload);
+      hideEditDialog();
+      // Notify parent component to refresh data
+      if (onBalanceDeleted) {
+        onBalanceDeleted();
+      }
+    } catch (error) {
+      console.error("Error deleting transaction:", error);
+    } finally {
+      setIsEditing(false);
     }
   };
 
@@ -59,10 +101,18 @@ const TransactionHistory = ({ balances, onBalanceDeleted }) => {
                   </Text>
                 )}
                 <IconButton
+                  icon="pencil"
+                  size={20}
+                  onPress={() => showEditDialog(balance)}
+                  style={styles.deleteButton}
+                  iconColor="blue"
+                />
+                <IconButton
                   icon="delete"
                   size={20}
                   onPress={() => showDeleteDialog(balance._id)}
                   style={styles.deleteButton}
+                  iconColor="red"
                 />
               </View>
               {balance.remark && (
@@ -93,6 +143,14 @@ const TransactionHistory = ({ balances, onBalanceDeleted }) => {
         onDismiss={hideDeleteDialog}
         onConfirm={handleDeleteBalance}
         isDeleting={isDeleting}
+      />
+
+      <TransactionUpdateDialog
+        visible={editDialogVisible}
+        onDismiss={hideEditDialog}
+        onSubmit={handleEditBalance}
+        isEditing={isEditing}
+        data={selectedEdit}
       />
     </>
   );
@@ -132,10 +190,12 @@ const styles = StyleSheet.create({
   creditText: {
     color: "#4CAF50",
     fontWeight: "bold",
+    width: "75%",
   },
   debitText: {
     color: "#F44336",
     fontWeight: "bold",
+    width: "75%",
   },
 });
 
