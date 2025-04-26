@@ -6,6 +6,7 @@ const userRoutes = require('../routes/user');
 const balanceRoutes = require('../routes/balance');
 const authRoutes = require('../routes/auth');
 const credentialRoutes = require('../routes/credential');
+const inventoryRoutes = require('../routes/inventory');
 const authMiddleware = require('../middleware/authMiddleware');
 
 const app = express();
@@ -24,6 +25,7 @@ app.use(authMiddleware);
 app.use('/api/users', userRoutes);
 app.use('/api/balance', balanceRoutes);
 app.use('/api/credential', credentialRoutes);
+app.use('/api/inventory', inventoryRoutes);
 
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
