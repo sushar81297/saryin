@@ -1,15 +1,15 @@
-const express = require("express");
-const router = express.Router();
-const Balance = require("../models/Balance");
-const User = require("../models/User");
+const express = require('express');
 
-// Create a new balance entry
-router.post("/", async (req, res) => {
+const router = express.Router();
+const Balance = require('../models/Balance');
+const User = require('../models/User');
+
+router.post('/', async (req, res) => {
   try {
     const { credit, debit, remark, currentPrice, userId } = req.body;
 
     if (!userId) {
-      return res.status(400).json({ message: "User ID is required" });
+      return res.status(400).json({ message: 'User ID is required' });
     }
 
     const newBalance = new Balance({
@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
     const user = await User.findById(userId);
     if (!user) {
       await Balance.findByIdAndDelete(savedBalance._id);
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     user.balance.push(savedBalance._id);
@@ -37,14 +37,13 @@ router.post("/", async (req, res) => {
 
     await user.save();
 
-    res.status(201).json(savedBalance);
+    return res.status(201).json(savedBalance);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 });
 
-// Get all balance entries
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const balances = await Balance.find();
     res.status(200).json(balances);
@@ -53,27 +52,25 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get a specific balance entry by ID
-router.get("/:id", async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const balance = await Balance.findById(req.params.id);
     if (!balance) {
-      return res.status(404).json({ message: "Balance not found" });
+      return res.status(404).json({ message: 'Balance not found' });
     }
-    res.status(200).json(balance);
+    return res.status(200).json(balance);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 });
 
-// Update a balance entry
-router.put("/:id", async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
     const { credit, debit, remark, currentPrice } = req.body;
 
     const balance = await Balance.findById(req.params.id);
     if (!balance) {
-      return res.status(404).json({ message: "Balance not found" });
+      return res.status(404).json({ message: 'Balance not found' });
     }
 
     // Find the user who owns this balance
@@ -93,23 +90,27 @@ router.put("/:id", async (req, res) => {
 
     const updatedBalance = await Balance.findByIdAndUpdate(
       req.params.id,
-      { credit, debit, remark, currentPrice },
+      {
+        credit,
+        debit,
+        remark,
+        currentPrice,
+      },
       { new: true }
     );
 
-    res.status(200).json(updatedBalance);
+    return res.status(200).json(updatedBalance);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 });
 
-// Delete a balance entry
-router.delete("/:id", async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const balance = await Balance.findById(req.params.id);
 
     if (!balance) {
-      return res.status(404).json({ message: "Balance not found" });
+      return res.status(404).json({ message: 'Balance not found' });
     }
 
     // Find the user who owns this balance and update their totals
@@ -120,17 +121,15 @@ router.delete("/:id", async (req, res) => {
       user.totalAmount = user.totalCredit - user.totalDebit;
 
       // Remove this balance from the user's balance array
-      user.balance = user.balance.filter(
-        (balanceId) => balanceId.toString() !== req.params.id
-      );
+      user.balance = user.balance.filter((balanceId) => balanceId.toString() !== req.params.id);
 
       await user.save();
     }
 
     await Balance.findByIdAndDelete(req.params.id);
-    res.status(200).json({ message: "Balance deleted successfully" });
+    return res.status(200).json({ message: 'Balance deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 });
 
