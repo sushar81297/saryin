@@ -30,7 +30,7 @@ router.get('/', async (req, res) => {
     const limit = req.query.limit ? Number(req.query.limit) : 10;
     const skip = (page - 1) * limit;
 
-    const { name, phoneNumber } = req.query;
+    const { name, phoneNumber, type } = req.query;
     const filter = {};
 
     if (name || phoneNumber) {
@@ -45,6 +45,9 @@ router.get('/', async (req, res) => {
           phoneNumber: { $regex: phoneNumber, $options: 'i' },
         });
       }
+    }
+    if (type) {
+      filter.type = type;
     }
     const totalUsers = await User.countDocuments(filter);
     const users = await User.find(filter)
