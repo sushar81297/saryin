@@ -31,8 +31,6 @@ const PriceDialog = ({
     }
 
     if (valid) {
-      console.log("Username:", username);
-      console.log("Password:", password);
       addItem();
     }
   };

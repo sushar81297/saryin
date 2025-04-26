@@ -4,10 +4,10 @@ import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 import React from "react";
 
 const categories = [
-  { id: "1", name: "Debit", icon: "cash", routeName: "Money" },
-  { id: "2", name: "Market", icon: "tag", routeName: "Price" },
-  { id: "3", name: "Bean", icon: "seed", routeName: "Bean" },
-  { id: "4", name: "Tailor", icon: "tshirt-crew", routeName: "Home" },
+  { id: "1", name: "အကြွေးစာရင်း", icon: "cash", routeName: "Money" },
+  { id: "2", name: "ပစ္စည်းစာရင်း", icon: "tag", routeName: "Price" },
+  { id: "3", name: "ပဲစာရင်း", icon: "seed", routeName: "Bean" },
+  { id: "4", name: "စာရင်း", icon: "tshirt-crew", routeName: "Home" },
 ];
 
 export default function CategoryScreen({ navigation }) {
@@ -16,7 +16,6 @@ export default function CategoryScreen({ navigation }) {
   const goToPage = (item) => {
     navigation.navigate(item.routeName);
   };
-
   const renderItem = ({ item }) => (
     <Card style={styles.card}>
       <Card.Content style={styles.cardContent}>

@@ -6,10 +6,8 @@ import UserList from "../components/home/UserList";
 import UserPagination from "../components/home/UserPagination";
 import UserRegistrationDialog from "../components/home/UserRegistrationDialog";
 import UserSearch from "../components/home/UserSearch";
-import axios from "axios";
+import axios from "../api/axiosConfig";
 import { useFocusEffect } from "@react-navigation/native";
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const HomeScreen = ({ navigation }) => {
   const [users, setUsers] = useState([]);
@@ -38,7 +36,7 @@ const HomeScreen = ({ navigation }) => {
   const fetchUsers = async (page = 1, name = "", phoneNumber = "") => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/users`, {
+      const response = await axios.get(`/users`, {
         params: {
           page,
           limit: 10,
@@ -126,13 +124,13 @@ const HomeScreen = ({ navigation }) => {
     setRegistrationError("");
 
     try {
-      const res = await axios.post(`${API_URL}/users`, {
+      const res = await axios.post(`/users`, {
         ...newUser,
         totalCredit: 0,
         totalDebit: 0,
       });
       if (res.data?._id && (newUser.totalCredit || newUser.totalDebit)) {
-        await axios.post(`${API_URL}/balance`, {
+        await axios.post(`/balance`, {
           credit: parseFloat(newUser.totalCredit),
           debit: parseFloat(newUser.totalDebit),
           remark: newUser.remark || "",

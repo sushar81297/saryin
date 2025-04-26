@@ -3,25 +3,19 @@ import { FlatList, StyleSheet, Text, View } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 
 import PriceDialog from "../components/price/PriceDialog";
-import axios from "axios";
+import UserPagination from "../components/home/UserPagination";
+import axios from "../api/axiosConfig";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function Price({ navigation }) {
-  const API_URL = process.env.EXPO_PUBLIC_API_URL;
   const [loading, setLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
     totalItems: 0,
     itemsPerPage: 10,
   });
-  const [items, setItems] = useState([
-    { id: "1", name: "T-shirt", price: 15, historyId: "1" },
-    { id: "2", name: "Hanger", price: 5, historyId: "2" },
-    { id: "3", name: "Jeans", price: 30, historyId: "3" },
-    { id: "4", name: "Jacket", price: 50, historyId: "4" },
-  ]);
+  const [items, setItems] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState("");
@@ -29,15 +23,20 @@ export default function Price({ navigation }) {
   const fetchItem = async (page = 1, name = "") => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/price`, {
+      const response = await axios.get(`/inventory`, {
         params: {
           page,
           limit: 10,
           name,
         },
       });
-      setItems(response.data.price);
-      setPagination(response.data.pagination);
+      setItems(response.data.items);
+      setPagination({
+        currentPage: response.data.currentPage,
+        totalPages: response.data.totalPages,
+        totalItems: response.data.totalItems,
+        itemsPerPage: 10,
+      });
     } catch (error) {
       console.error("Error fetching users:", error);
     } finally {
@@ -59,21 +58,20 @@ export default function Price({ navigation }) {
   const handleAddItem = async () => {
     if (itemName && itemPrice) {
       const newItem = {
-        id: (items.length + 1).toString(),
+        _id: item._id,
         name: itemName,
-        price: parseFloat(itemPrice),
-        historyId: (items.length + 1).toString(),
+        latestPrice: parseFloat(itemPrice),
       };
       setItems([...items, newItem]);
       setShowForm(false);
       setItemName("");
       setItemPrice("");
       try {
-        const res = await axios.post(`${API_URL}/price`, {
+        await axios.post(`/inventory/create`, {
           name: itemName,
           price: itemPrice,
         });
-        navigation.navigate("Category");
+        fetchItem();
       } catch (error) {
         console.error("Error registering user:", error);
         setError("Something went wrong. Please try again.");
@@ -81,21 +79,19 @@ export default function Price({ navigation }) {
     }
   };
 
-  const filteredItems = items.filter((item) =>
-    item.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const handlePageChange = (newPage) => {
+    fetchItem(newPage, nameFilter);
+  };
 
   const renderItem = ({ item }) => (
     <Card
       style={styles.card}
-      onPress={() =>
-        navigation.navigate("PriceHistory", { itemId: item.historyId })
-      }
+      onPress={() => navigation.navigate("PriceHistory", { itemId: item._id })}
     >
       <Card.Content style={styles.cardContent}>
         <View style={styles.itemText}>
           <Text style={styles.itemName}>{item.name}</Text>
-          <Text style={styles.price}>{item.price} ကျပ်</Text>
+          <Text style={styles.price}>{item.latestPrice} ကျပ်</Text>
         </View>
         <IconButton icon="chevron-right" size={24} color="black" />
       </Card.Content>
@@ -129,9 +125,14 @@ export default function Price({ navigation }) {
       </View>
 
       <FlatList
-        data={filteredItems}
+        data={items}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+      />
+
+      <UserPagination
+        pagination={pagination}
+        handlePageChange={handlePageChange}
       />
 
       <PriceDialog

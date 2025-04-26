@@ -4,7 +4,7 @@ import { StyleSheet, View } from "react-native";
 
 import TransactionDeleteDialog from "./TransactionDeleteDialog";
 import TransactionUpdateDialog from "./TransactionUpdateDialog";
-import axios from "axios";
+import axios from "../../api/axiosConfig";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -42,7 +42,7 @@ const TransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
 
     try {
       setIsDeleting(true);
-      await axios.delete(`${API_URL}/balance/${selectedBalanceId}`);
+      await axios.delete(`/balance/${selectedBalanceId}`);
       hideDeleteDialog();
       // Notify parent component to refresh data
       if (onBalanceDeleted) {
@@ -69,7 +69,7 @@ const TransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
         }
       }
       payload.remark = data.remark;
-      await axios.put(`${API_URL}/balance/${selectedEdit._id}`, payload);
+      await axios.put(`/balance/${selectedEdit._id}`, payload);
       hideEditDialog();
       // Notify parent component to refresh data
       if (onBalanceDeleted) {

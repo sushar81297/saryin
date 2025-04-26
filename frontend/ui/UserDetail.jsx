@@ -24,7 +24,7 @@ import DebitDialog from "../components/userDetail/DebitDialog";
 import EditUserDialog from "../components/userDetail/EditUserDialog";
 import TransactionHistory from "../components/userDetail/TransactionHistory";
 import UserSummary from "../components/userDetail/UserSummary";
-import axios from "axios";
+import axios from "../api/axiosConfig";
 import { useFocusEffect } from "@react-navigation/native";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -53,7 +53,7 @@ const UserDetailScreen = ({ route }) => {
 
   const fetchUserDetails = async () => {
     try {
-      const response = await axios.get(`${API_URL}/users/${userId}`);
+      const response = await axios.get(`/users/${userId}`);
       setUser(response.data);
     } catch (err) {
       console.error("Error fetching user details:", err);
@@ -65,7 +65,7 @@ const UserDetailScreen = ({ route }) => {
 
   const handleAddCredit = async (data) => {
     try {
-      await axios.post(`${API_URL}/balance`, {
+      await axios.post(`/balance`, {
         credit: parseFloat(data.creditAmount),
         debit: 0,
         userId: userId,
@@ -81,7 +81,7 @@ const UserDetailScreen = ({ route }) => {
 
   const handleAddDebit = async (data) => {
     try {
-      await axios.post(`${API_URL}/balance`, {
+      await axios.post(`/balance`, {
         credit: 0,
         debit: parseFloat(data.debitAmount),
         userId: userId,
@@ -98,7 +98,7 @@ const UserDetailScreen = ({ route }) => {
 
   const handleEditUser = async (name, phoneNumber) => {
     try {
-      await axios.put(`${API_URL}/users/${userId}`, {
+      await axios.put(`/users/${userId}`, {
         name,
         phoneNumber,
       });

@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import axios from "axios";
+import { loginUser } from "../api/authApi";
+import { saveToken } from "../auth/tokenStorage";
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -36,6 +38,8 @@ export default function LoginScreen({ navigation }) {
           login: username,
           password,
         });
+        const data = await loginUser({ login: username, password });
+        await saveToken(data);
         navigation.navigate("Category");
       } catch (error) {
         console.error("Error registering user:", error);

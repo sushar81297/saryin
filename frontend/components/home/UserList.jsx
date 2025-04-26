@@ -18,7 +18,7 @@ import {
 import React, { useState } from "react";
 
 import UserDeleteDialog from "./UserDeleteDialog";
-import axios from "axios";
+import axios from "../../api/axiosConfig";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -42,7 +42,7 @@ const UserList = ({ users, loading, navigation, onRefresh }) => {
 
     setIsDeleting(true);
     try {
-      await axios.delete(`${API_URL}/users/${userToDelete._id}`);
+      await axios.delete(`/users/${userToDelete._id}`);
       hideDeleteDialog();
       if (onRefresh) {
         onRefresh();

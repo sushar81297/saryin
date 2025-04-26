@@ -33,7 +33,7 @@ export default function App() {
         <PaperProvider theme={theme}>
           <NavigationContainer>
             <StatusBar style="auto" />
-            <Stack.Navigator initialRouteName="Price">
+            <Stack.Navigator initialRouteName="Login">
               <Stack.Screen
                 name="Login"
                 component={LoginScreen}

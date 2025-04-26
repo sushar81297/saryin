@@ -5,7 +5,7 @@ import React from "react";
 
 const UserPagination = ({ pagination, handlePageChange }) => {
   const { currentPage, totalPages } = pagination;
-
+  console.log(pagination, "pagination");
   return (
     <View style={styles.paginationContainer}>
       <IconButton
