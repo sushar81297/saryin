@@ -62,8 +62,12 @@ router.post('/create', async (req, res) => {
 
 router.put('/update-price/:id', async (req, res) => {
   try {
-    const { price } = req.body;
+    const { name, price } = req.body;
     const { id } = req.params;
+
+    if (!price) {
+      return res.status(400).json({ message: 'Price is required' });
+    }
 
     const item = await InventoryItem.findById(id);
 
@@ -72,6 +76,9 @@ router.put('/update-price/:id', async (req, res) => {
     }
 
     item.prices.push({ value: price });
+    if (name) {
+      item.name = name;
+    }
     await item.save();
 
     return res.json(item);
@@ -83,6 +90,9 @@ router.put('/update-price/:id', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const item = await InventoryItem.findById(req.params.id);
+    if (item && item.prices.length > 0) {
+      item.prices = item.prices.sort((a, b) => b.changedAt - a.changedAt);
+    }
     if (!item) return res.status(404).json({ message: 'Item not found' });
     return res.json(item);
   } catch (err) {
