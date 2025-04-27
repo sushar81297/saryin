@@ -1,10 +1,9 @@
-import { Button, Text, TextInput } from "react-native-paper";
-import React, { useState } from "react";
+import { Button, Text, TextInput, ActivityIndicator } from "react-native-paper";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-
-import axios from "axios";
-import { loginUser } from "../api/authApi";
-import { saveToken } from "../auth/tokenStorage";
+import LoadingScreen from "./Loading";
+import axios from "../api/axiosConfig";
+import { saveToken, getToken } from "../auth/tokenStorage";
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -12,8 +11,23 @@ export default function LoginScreen({ navigation }) {
   const [errorUsername, setErrorUsername] = useState("");
   const [errorPassword, setErrorPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const API_URL = process.env.EXPO_PUBLIC_API_URL;
+  const checkLogin = async () => {
+    const response = await getToken("userCredential");
+    const userData =
+      response && response.data ? JSON.parse(response.data) : null;
+    if (userData && userData.token) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Category" }],
+      });
+    }
+  };
+
+  useEffect(() => {
+    checkLogin();
+  }, []);
 
   const handleLogin = async () => {
     let valid = true;
@@ -33,18 +47,22 @@ export default function LoginScreen({ navigation }) {
     }
 
     if (valid) {
+      setIsLoading(true);
       try {
-        await axios.post(`${API_URL}/auth/login`, {
+        const response = await axios.post(`/auth/login`, {
           login: username,
           password,
         });
-        const data = await loginUser({ login: username, password });
-        await saveToken(data);
-        navigation.navigate("Category");
+        await saveToken(response.data);
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Category" }],
+        });
       } catch (error) {
         console.error("Error registering user:", error);
         setError("Something went wrong. Please try again.");
       }
+      setIsLoading(false);
     }
   };
 
@@ -59,49 +77,63 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.formContainer}>
-        <Text style={styles.title}>Login</Text>
+    <>
+      {isLoading ? (
+        <LoadingScreen />
+      ) : (
+        <View style={styles.container}>
+          <View style={styles.formContainer}>
+            <Text style={styles.title}>Login</Text>
 
-        <TextInput
-          placeholder="Username"
-          value={username}
-          onChangeText={(value) => handleInputChange(value, "username")}
-          style={styles.input}
-          mode="flat"
-          underlineColor="gray"
-          activeUnderlineColor="#2196F3"
-        />
-        {errorUsername ? (
-          <Text style={styles.errorText}>{errorUsername}</Text>
-        ) : null}
+            <TextInput
+              placeholder="Username"
+              value={username}
+              onChangeText={(value) => handleInputChange(value, "username")}
+              style={styles.input}
+              mode="flat"
+              underlineColor="gray"
+              activeUnderlineColor="#2196F3"
+            />
+            {errorUsername ? (
+              <Text style={styles.errorText}>{errorUsername}</Text>
+            ) : null}
 
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={(value) => handleInputChange(value, "password")}
-          style={styles.input}
-          mode="flat"
-          secureTextEntry
-          underlineColor="gray"
-          activeUnderlineColor="#2196F3"
-        />
-        {errorPassword ? (
-          <Text style={styles.errorText}>{errorPassword}</Text>
-        ) : null}
+            <TextInput
+              placeholder="Password"
+              value={password}
+              onChangeText={(value) => handleInputChange(value, "password")}
+              style={styles.input}
+              mode="flat"
+              secureTextEntry
+              underlineColor="gray"
+              activeUnderlineColor="#2196F3"
+            />
+            {errorPassword ? (
+              <Text style={styles.errorText}>{errorPassword}</Text>
+            ) : null}
 
-        <Button
-          mode="contained"
-          onPress={handleLogin}
-          style={styles.loginButton}
-          contentStyle={styles.buttonContent}
-        >
-          Login
-        </Button>
+            {isLoading ? (
+              <ActivityIndicator
+                size="large"
+                color="white"
+                style={{ marginTop: 30 }}
+              />
+            ) : (
+              <Button
+                mode="contained"
+                onPress={handleLogin}
+                style={styles.loginButton}
+                contentStyle={styles.buttonContent}
+              >
+                Login
+              </Button>
+            )}
 
-        {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      </View>
-    </View>
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          </View>
+        </View>
+      )}
+    </>
   );
 }
 

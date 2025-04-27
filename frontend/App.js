@@ -59,7 +59,11 @@ export default function App() {
                 component={PriceScreen}
                 options={{ title: "ပစ္စည်းစာရင်း" }}
               />
-              <Stack.Screen name="PriceHistory" component={PriceHistory} />
+              <Stack.Screen
+                name="PriceHistory"
+                component={PriceHistory}
+                options={{ title: "Price History" }}
+              />
               <Stack.Screen
                 name="Home"
                 component={HomeScreen}

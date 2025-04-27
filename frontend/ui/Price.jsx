@@ -80,7 +80,12 @@ export default function Price({ navigation }) {
   const renderItem = ({ item }) => (
     <Card
       style={styles.card}
-      onPress={() => navigation.navigate("PriceHistory", { itemId: item._id })}
+      onPress={() =>
+        navigation.navigate("PriceHistory", {
+          id: item.id,
+          name: item.name,
+        })
+      }
     >
       <Card.Content style={styles.cardContent}>
         <View style={styles.itemText}>
