@@ -6,8 +6,6 @@ import TransactionDeleteDialog from "./TransactionDeleteDialog";
 import TransactionUpdateDialog from "./TransactionUpdateDialog";
 import axios from "../../api/axiosConfig";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
-
 const TransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [selectedBalanceId, setSelectedBalanceId] = useState(null);

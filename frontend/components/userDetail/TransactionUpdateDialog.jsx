@@ -37,7 +37,6 @@ const TransactionUpdateDialog = ({
       if (data?.credit) setAmount(data.credit.toString());
       if (data?.debit) setAmount(data.debit.toString());
       if (data?.remark) setRemark(data.remark.toString());
-      if (data?.currentPrice) setCurrentPrice(data.currentPrice.toString());
     }
   }, [data]);
 

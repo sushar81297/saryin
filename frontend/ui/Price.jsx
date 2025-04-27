@@ -8,7 +8,6 @@ import axios from "../api/axiosConfig";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function Price({ navigation }) {
-  const [loading, setLoading] = useState(false);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -21,7 +20,6 @@ export default function Price({ navigation }) {
   const [itemPrice, setItemPrice] = useState("");
 
   const fetchItem = async (page = 1, name = "") => {
-    setLoading(true);
     try {
       const response = await axios.get(`/inventory`, {
         params: {
@@ -39,8 +37,6 @@ export default function Price({ navigation }) {
       });
     } catch (error) {
       console.error("Error fetching users:", error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -52,13 +48,12 @@ export default function Price({ navigation }) {
     useCallback(() => {
       fetchItem();
       return () => {};
-    }, [])
+    }, []),
   );
 
   const handleAddItem = async () => {
     if (itemName && itemPrice) {
       const newItem = {
-        _id: item._id,
         name: itemName,
         latestPrice: parseFloat(itemPrice),
       };
@@ -74,13 +69,12 @@ export default function Price({ navigation }) {
         fetchItem();
       } catch (error) {
         console.error("Error registering user:", error);
-        setError("Something went wrong. Please try again.");
       }
     }
   };
 
   const handlePageChange = (newPage) => {
-    fetchItem(newPage, nameFilter);
+    fetchItem(newPage);
   };
 
   const renderItem = ({ item }) => (

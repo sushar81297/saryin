@@ -34,7 +34,7 @@ export default function LoginScreen({ navigation }) {
 
     if (valid) {
       try {
-        const res = await axios.post(`${API_URL}/auth/login`, {
+        await axios.post(`${API_URL}/auth/login`, {
           login: username,
           password,
         });

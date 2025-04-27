@@ -27,8 +27,6 @@ import UserSummary from "../components/userDetail/UserSummary";
 import axios from "../api/axiosConfig";
 import { useFocusEffect } from "@react-navigation/native";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
-
 const UserDetailScreen = ({ route }) => {
   const { userId } = route.params;
   const [user, setUser] = useState(null);
@@ -40,18 +38,15 @@ const UserDetailScreen = ({ route }) => {
 
   useEffect(() => {
     fetchUserDetails();
-  }, [userId]);
+  }, [fetchUserDetails, userId]);
 
   useFocusEffect(
     useCallback(() => {
       fetchUserDetails();
-      return () => {
-        // Optional cleanup if needed
-      };
-    }, [userId])
+    }, [fetchUserDetails]),
   );
 
-  const fetchUserDetails = async () => {
+  const fetchUserDetails = useCallback(async () => {
     try {
       const response = await axios.get(`/users/${userId}`);
       setUser(response.data);
@@ -61,7 +56,7 @@ const UserDetailScreen = ({ route }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
   const handleAddCredit = async (data) => {
     try {

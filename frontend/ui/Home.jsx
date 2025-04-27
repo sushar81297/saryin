@@ -65,7 +65,7 @@ const HomeScreen = ({ navigation }) => {
       return () => {
         // Optional cleanup if needed
       };
-    }, [])
+    }, []),
   );
 
   const handleSearch = () => {
@@ -158,7 +158,7 @@ const HomeScreen = ({ navigation }) => {
     } catch (error) {
       console.error("Error registering user:", error);
       setRegistrationError(
-        error.response?.data?.message || "Failed to register user"
+        error.response?.data?.message || "Failed to register user",
       );
     } finally {
       setRegistering(false);

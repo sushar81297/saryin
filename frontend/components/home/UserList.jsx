@@ -20,8 +20,6 @@ import React, { useState } from "react";
 import UserDeleteDialog from "./UserDeleteDialog";
 import axios from "../../api/axiosConfig";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
-
 const UserList = ({ users, loading, navigation, onRefresh }) => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [userToDelete, setUserToDelete] = useState(null);

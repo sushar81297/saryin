@@ -1,11 +1,10 @@
-import { Button, IconButton } from "react-native-paper";
 import { StyleSheet, Text, View } from "react-native";
 
+import { IconButton } from "react-native-paper";
 import React from "react";
 
 const UserPagination = ({ pagination, handlePageChange }) => {
   const { currentPage, totalPages } = pagination;
-  console.log(pagination, "pagination");
   return (
     <View style={styles.paginationContainer}>
       <IconButton
