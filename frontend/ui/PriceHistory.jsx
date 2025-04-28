@@ -61,11 +61,11 @@ export default function PriceHistory({ route }) {
     if (itemName && itemPrice) {
       setVisible(false);
       try {
-        const response = await axios.put(`/inventory/update-price/${id}`, {
+        await axios.put(`/inventory/update-price/${id}`, {
           name: itemName,
           price: itemPrice,
         });
-        setHistory(response.data.prices);
+        fetchItem();
         setItemPrice("");
       } catch (error) {
         console.error("Error registering user:", error);
@@ -154,6 +154,11 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
     textAlign: "center",
+  },
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 16,
   },
   card: {
     marginBottom: 12,
