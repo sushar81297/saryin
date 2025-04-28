@@ -8,7 +8,7 @@ const DeleteConfirmDialog = ({ visible, onDismiss, onConfirm, isDeleting }) => {
       <Dialog visible={visible} onDismiss={onDismiss}>
         <Dialog.Title>ဖျက်ရန် သေချာပါသလား?</Dialog.Title>
         <Dialog.Content>
-          <Paragraph>ဤအကြွေးစာရင်းကို ဖျက်ရန် သေချာပါသလား?</Paragraph>
+          <Paragraph>ဤစာရင်းကို ဖျက်ရန် သေချာပါသလား?</Paragraph>
         </Dialog.Content>
         <Dialog.Actions>
           <Button onPress={onDismiss}>မလုပ်တော့ပါ</Button>

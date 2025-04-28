@@ -48,10 +48,10 @@ export default function PriceHistory({ route }) {
   const handleDelete = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.delete(`/inventory/${id}`);
-      console.log(response.data.prices, "response");
+      await axios.delete(`/inventory/${id}/price/${selectedId}`);
       hideDialog();
       setIsLoading(false);
+      fetchItem();
     } catch (error) {
       console.error("Error deleting item:", error);
     }
@@ -61,10 +61,13 @@ export default function PriceHistory({ route }) {
     if (itemName && itemPrice) {
       setVisible(false);
       try {
-        await axios.put(`/inventory/update-price/${id}`, {
+        const res = await axios.put(`/inventory/update-price/${id}`, {
           name: itemName,
           price: itemPrice,
         });
+        if (res.data.name) {
+          setItemName(res.data.name);
+        }
         fetchItem();
         setItemPrice("");
       } catch (error) {
@@ -101,7 +104,7 @@ export default function PriceHistory({ route }) {
         >
           အသစ်ထည့်ရန်
         </Button>
-        <Text style={styles.title}>{name}</Text>
+        <Text style={styles.title}>{itemName}</Text>
       </View>
       <FlatList
         data={history}

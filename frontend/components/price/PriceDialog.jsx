@@ -42,7 +42,7 @@ const PriceDialog = ({
           <View style={styles.formContainer}>
             <TextInput
               label="ပစ္စည်းအမည်"
-              value={itemName}
+              defaultValue={itemName}
               onChangeText={setItemName}
               style={styles.input}
               placeholder="ပစ္စည်းအမည်"
@@ -52,7 +52,7 @@ const PriceDialog = ({
             ) : null}
             <TextInput
               label="စျေးနှုန်း"
-              value={itemPrice}
+              defaultValue={itemPrice}
               onChangeText={setItemPrice}
               keyboardType="numeric"
               style={styles.input}

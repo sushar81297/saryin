@@ -15,6 +15,7 @@ import { StatusBar } from "expo-status-bar";
 import UserDetailScreen from "./ui/UserDetail";
 import { createStackNavigator } from "@react-navigation/stack";
 import LogoutButton from "./components/common/LogoutButton";
+import { navigationRef } from "./util/NavigationService";
 
 const Stack = createStackNavigator();
 
@@ -32,7 +33,7 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <PaperProvider theme={theme}>
-          <NavigationContainer>
+          <NavigationContainer ref={navigationRef}>
             <StatusBar style="auto" />
             <Stack.Navigator
               initialRouteName="Login"
@@ -68,7 +69,7 @@ export default function App() {
               <Stack.Screen
                 name="PriceHistory"
                 component={PriceHistory}
-                options={{ title: "Price History" }}
+                options={{ title: "ယခင်စျေးနူန်း" }}
               />
               <Stack.Screen
                 name="Home"

@@ -5,7 +5,7 @@ import React from "react";
 export default function LoadingScreen() {
   return (
     <View style={styles.container}>
-      <ActivityIndicator size="large" color="#ffffff" />
+      <ActivityIndicator size="large" color="#2196f3" />
     </View>
   );
 }
@@ -13,7 +13,7 @@ export default function LoadingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#2196f3",
+    backgroundColor: "transparent",
     justifyContent: "center",
     alignItems: "center",
   },

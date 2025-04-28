@@ -116,4 +116,34 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+router.delete('/:inventoryId/price/:priceId', async (req, res) => {
+  const { inventoryId, priceId } = req.params;
+
+  if (!inventoryId || !priceId) {
+    return res.status(400).json({ message: 'Inventory ID and price ID are required' });
+  }
+
+  try {
+    const inventoryItem = await InventoryItem.findById(inventoryId);
+    if (!inventoryItem) {
+      return res.status(404).json({ message: 'Inventory item not found' });
+    }
+
+    const priceIndex = inventoryItem.prices.findIndex((price) => price._id.toString() === priceId);
+
+    if (priceIndex === -1) {
+      return res.status(404).json({ message: 'Price not found' });
+    }
+
+    inventoryItem.prices.splice(priceIndex, 1);
+
+    await inventoryItem.save();
+
+    return res.json({ message: 'Price deleted successfully', inventoryItem });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

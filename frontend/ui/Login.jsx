@@ -69,14 +69,14 @@ export default function LoginScreen({ navigation }) {
     let valid = true;
 
     if (!username) {
-      setErrorUsername("Username is required");
+      setErrorUsername("အမည်ဖြည့်ပါ");
       valid = false;
     } else {
       setErrorUsername("");
     }
 
     if (!password) {
-      setErrorPassword("Password is required");
+      setErrorPassword("လျှိုဝှက်နံပါတ်ဖြည့်ပါ");
       valid = false;
     } else {
       setErrorPassword("");
@@ -93,7 +93,7 @@ export default function LoginScreen({ navigation }) {
         await saveToken(response.data);
       } catch (error) {
         console.error("Error registering user:", error);
-        setError("Something went wrong. Please try again.");
+        setError("အမည် (သို့) လျှိုဝှက်နံပါတ်မှားယွင်းနေပါသည်");
       }
       setIsLoading(false);
     }
@@ -116,23 +116,24 @@ export default function LoginScreen({ navigation }) {
       ) : (
         <View style={styles.container}>
           <View style={styles.formContainer}>
-            <Text style={styles.title}>Login</Text>
+            <Text style={styles.title}>အကောင့်ဝင်ရန်</Text>
 
             <TextInput
-              placeholder="Username"
+              placeholder="အမည်ထည့်ပါ"
               value={username}
               onChangeText={(value) => handleInputChange(value, "username")}
               style={styles.input}
               mode="flat"
               underlineColor="gray"
               activeUnderlineColor="#2196F3"
+              autoCapitalize="none"
             />
             {errorUsername ? (
               <Text style={styles.errorText}>{errorUsername}</Text>
             ) : null}
 
             <TextInput
-              placeholder="Password"
+              placeholder="လျှို့ဝှက်နံပါတ်ထည့်ပါ"
               value={password}
               onChangeText={(value) => handleInputChange(value, "password")}
               style={styles.input}
@@ -140,6 +141,7 @@ export default function LoginScreen({ navigation }) {
               secureTextEntry
               underlineColor="gray"
               activeUnderlineColor="#2196F3"
+              autoCapitalize="none"
             />
             {errorPassword ? (
               <Text style={styles.errorText}>{errorPassword}</Text>
@@ -158,7 +160,7 @@ export default function LoginScreen({ navigation }) {
                 style={styles.loginButton}
                 contentStyle={styles.buttonContent}
               >
-                Login
+                အကောင့်ဝင်မည်
               </Button>
             )}
 
@@ -173,7 +175,7 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#efefef", // blue background
+    backgroundColor: "#efefef",
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
@@ -181,14 +183,14 @@ const styles = StyleSheet.create({
   formContainer: {
     width: "100%",
     maxWidth: 320,
-    backgroundColor: "#fff", // white background for the form
+    backgroundColor: "#fff",
     padding: 24,
     borderRadius: 12,
-    elevation: 5, // shadow
+    elevation: 5,
     alignItems: "center",
   },
   title: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 24,
     color: "#333",
@@ -203,6 +205,7 @@ const styles = StyleSheet.create({
     color: "red",
     fontSize: 12,
     alignSelf: "flex-start",
+    marginTop: 8,
     marginBottom: 8,
     marginLeft: 4,
   },

@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
+import { resetRoot } from "../util/NavigationService";
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL;
 
@@ -21,6 +22,20 @@ instance.interceptors.request.use(
     return config;
   },
   (error) => {
+    return Promise.reject(error);
+  },
+);
+
+instance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  async (error) => {
+    if (error.response && error.response.status === 401) {
+      await AsyncStorage.clear();
+      resetRoot("Login");
+    }
+
     return Promise.reject(error);
   },
 );
