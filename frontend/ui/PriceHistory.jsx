@@ -102,6 +102,7 @@ export default function PriceHistory({ route }) {
           အသစ်ထည့်ရန်
         </Button>
       </View>
+      <Text style={styles.title}>{name}</Text>
       <FlatList
         data={history}
         keyExtractor={(item, index) => index.toString()}

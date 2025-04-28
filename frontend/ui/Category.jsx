@@ -1,13 +1,38 @@
 import { Card, IconButton, Text, useTheme } from "react-native-paper";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 
-import React from "react";
+import { getToken } from "../auth/tokenStorage";
+import React, { useEffect } from "react";
 
 const categories = [
-  { id: "1", name: "အကြွေးစာရင်း", icon: "cash", routeName: "Money" },
-  { id: "2", name: "ပစ္စည်းစာရင်း", icon: "tag", routeName: "Price" },
-  { id: "3", name: "ပဲစာရင်း", icon: "seed", routeName: "Bean" },
-  { id: "4", name: "စာရင်း", icon: "tshirt-crew", routeName: "Home" },
+  {
+    id: "1",
+    name: "အကြွေးစာရင်း",
+    icon: "cash",
+    routeName: "Money",
+    permission: "normal",
+  },
+  {
+    id: "2",
+    name: "ပစ္စည်းစာရင်း",
+    icon: "tag",
+    routeName: "Price",
+    permission: "price",
+  },
+  {
+    id: "3",
+    name: "ပဲစာရင်း",
+    icon: "seed",
+    routeName: "Bean",
+    permission: "bean",
+  },
+  // {
+  //   id: "4",
+  //   name: "စာရင်း",
+  //   icon: "tshirt-crew",
+  //   routeName: "Home",
+  //   permission: "tailor",
+  // },
 ];
 
 export default function CategoryScreen({ navigation }) {
@@ -30,6 +55,30 @@ export default function CategoryScreen({ navigation }) {
       </Card.Content>
     </Card>
   );
+  const checkPermission = async () => {
+    const response = await getToken("userCredential");
+    const userData = response ? JSON.parse(response) : null;
+    if (userData && userData.permissions.length > 1) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: "Category" }],
+      });
+    }
+    if (userData && userData.permissions.length === 1) {
+      const routName =
+        categories.find((item) => item.permission === userData.permissions[0])
+          ?.routeName || "Category";
+      console.log(routName, "routeName");
+      navigation.reset({
+        index: 0,
+        routes: [{ name: routName }],
+      });
+    }
+  };
+
+  useEffect(() => {
+    checkPermission();
+  }, []);
 
   return (
     <View style={styles.container}>

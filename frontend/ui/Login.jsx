@@ -15,8 +15,7 @@ export default function LoginScreen({ navigation }) {
 
   const checkLogin = async () => {
     const response = await getToken("userCredential");
-    const userData =
-      response && response.data ? JSON.parse(response.data) : null;
+    const userData = response ? JSON.parse(response) : null;
     if (userData && userData.token) {
       navigation.reset({
         index: 0,
@@ -50,8 +49,8 @@ export default function LoginScreen({ navigation }) {
       setIsLoading(true);
       try {
         const response = await axios.post(`/auth/login`, {
-          login: username,
-          password,
+          login: "naing",
+          password: "123",
         });
         await saveToken(response.data);
         navigation.reset({
