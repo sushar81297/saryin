@@ -101,8 +101,8 @@ export default function PriceHistory({ route }) {
         >
           အသစ်ထည့်ရန်
         </Button>
+        <Text style={styles.title}>{name}</Text>
       </View>
-      <Text style={styles.title}>{name}</Text>
       <FlatList
         data={history}
         keyExtractor={(item, index) => index.toString()}
@@ -135,16 +135,17 @@ export default function PriceHistory({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: "#f8f9fa",
+    backgroundColor: "#f5f5f5",
   },
   stickyHeader: {
     backgroundColor: "#fff",
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
     elevation: 3,
     zIndex: 1000,
-    marginBottom: 10,
   },
   addButton: {
     backgroundColor: "#2196F3",

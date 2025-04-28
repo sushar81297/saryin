@@ -215,16 +215,17 @@ export default function Price({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f8f9fa",
-    padding: 10,
+    backgroundColor: "#f5f5f5",
   },
   stickyHeader: {
     backgroundColor: "#fff",
+    paddingHorizontal: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#e0e0e0",
     elevation: 3,
     zIndex: 1000,
-    marginBottom: 10,
   },
   addButton: {
     backgroundColor: "#2196F3",
