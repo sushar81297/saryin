@@ -44,7 +44,6 @@ export default function LoginScreen({ navigation }) {
   };
 
   const checkPermission = (userData) => {
-    console.log(userData, "userDatar");
     if (userData) {
       const { permissions } = userData;
       let routeName = "Category";

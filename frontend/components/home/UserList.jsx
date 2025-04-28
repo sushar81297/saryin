@@ -66,9 +66,7 @@ const UserList = ({ users, loading, navigation, onRefresh }) => {
       <TouchableOpacity
         onPress={() => navigation.navigate("UserDetail", { userId: item._id })}
       >
-        <Card
-          style={item.type === "bean" ? styles.userCardBean : styles.userCard}
-        >
+        <Card style={styles.userCard}>
           <Card.Content style={styles.userCardContent}>
             <Avatar.Text size={50} label={initials} style={styles.avatar} />
             {item.type && item.type === "bean" ? (

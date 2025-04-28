@@ -14,6 +14,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import UserDetailScreen from "./ui/UserDetail";
 import { createStackNavigator } from "@react-navigation/stack";
+import LogoutButton from "./components/common/LogoutButton";
 
 const Stack = createStackNavigator();
 
@@ -33,7 +34,12 @@ export default function App() {
         <PaperProvider theme={theme}>
           <NavigationContainer>
             <StatusBar style="auto" />
-            <Stack.Navigator initialRouteName="Login">
+            <Stack.Navigator
+              initialRouteName="Login"
+              screenOptions={{
+                headerRight: () => <LogoutButton />,
+              }}
+            >
               <Stack.Screen
                 name="Login"
                 component={LoginScreen}
