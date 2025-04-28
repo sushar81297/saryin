@@ -2,12 +2,7 @@ import { Button, Dialog, Paragraph, Portal } from "react-native-paper";
 
 import React from "react";
 
-const TransactionDeleteDialog = ({
-  visible,
-  onDismiss,
-  onConfirm,
-  isDeleting,
-}) => {
+const DeleteConfirmDialog = ({ visible, onDismiss, onConfirm, isDeleting }) => {
   return (
     <Portal>
       <Dialog visible={visible} onDismiss={onDismiss}>
@@ -31,4 +26,4 @@ const TransactionDeleteDialog = ({
   );
 };
 
-export default TransactionDeleteDialog;
+export default DeleteConfirmDialog;

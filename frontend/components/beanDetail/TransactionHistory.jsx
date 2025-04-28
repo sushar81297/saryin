@@ -3,10 +3,8 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import BeanTransactionUpdateDialog from "./BeanTransactionUpdateDialog";
-import TransactionDeleteDialog from "./TransactionDeleteDialog";
-import axios from "axios";
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+import DeleteConfirmDialog from "../common/DeleteConfirmDialog";
+import axios from "../../api/axiosConfig";
 
 const BeanTransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
@@ -42,7 +40,7 @@ const BeanTransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
 
     try {
       setIsDeleting(true);
-      await axios.delete(`${API_URL}/balance/${selectedBalanceId}`);
+      await axios.delete(`/balance/${selectedBalanceId}`);
       hideDeleteDialog();
       // Notify parent component to refresh data
       if (onBalanceDeleted) {
@@ -70,7 +68,7 @@ const BeanTransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
       }
       payload.remark = data.remark;
       payload.currentPrice = parseFloat(data.currentPrice);
-      await axios.put(`${API_URL}/balance/${selectedEdit._id}`, payload);
+      await axios.put(`/balance/${selectedEdit._id}`, payload);
       hideEditDialog();
       // Notify parent component to refresh data
       if (onBalanceDeleted) {
@@ -136,7 +134,7 @@ const BeanTransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
         )}
       </Card.Content>
 
-      <TransactionDeleteDialog
+      <DeleteConfirmDialog
         visible={deleteDialogVisible}
         onDismiss={hideDeleteDialog}
         onConfirm={handleDeleteBalance}
