@@ -185,6 +185,12 @@ export default function Price({ navigation }) {
         data={items}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.listContainer}
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>စာရင်းမရှိပါ</Text>
+          </View>
+        }
       />
 
       <UserPagination
@@ -244,7 +250,12 @@ const styles = StyleSheet.create({
   searchButton: {
     backgroundColor: "#2196F3",
   },
+  listContainer: {
+    flexGrow: 1,
+    padding: 10,
+  },
   card: {
+    marginTop: 12,
     marginBottom: 12,
     borderRadius: 12,
     backgroundColor: "#fff",

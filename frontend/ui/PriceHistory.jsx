@@ -107,6 +107,7 @@ export default function PriceHistory({ route }) {
         data={history}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
+        contentContainerStyle={styles.listContainer}
         ListEmptyComponent={
           <Text style={styles.emptyText}>No price history available.</Text>
         }
@@ -160,8 +161,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 16,
+    marginTop: 16,
+  },
+  listContainer: {
+    flexGrow: 1,
+    padding: 10,
   },
   card: {
+    marginTop: 12,
     marginBottom: 12,
     borderRadius: 12,
     backgroundColor: "#fff",
