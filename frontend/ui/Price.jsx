@@ -93,7 +93,6 @@ export default function Price({ navigation }) {
   };
 
   const handleSearch = () => {
-    console.log("Search query:", searchQuery);
     fetchItem(1, searchQuery);
   };
 

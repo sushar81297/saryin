@@ -13,13 +13,51 @@ export default function LoginScreen({ navigation }) {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const categories = [
+    {
+      id: "1",
+      name: "အကြွေးစာရင်း",
+      icon: "cash",
+      routeName: "Money",
+      permission: "normal",
+    },
+    {
+      id: "2",
+      name: "ပစ္စည်းစာရင်း",
+      icon: "tag",
+      routeName: "Price",
+      permission: "price",
+    },
+    {
+      id: "3",
+      name: "ပဲစာရင်း",
+      icon: "seed",
+      routeName: "Bean",
+      permission: "bean",
+    },
+  ];
+
   const checkLogin = async () => {
     const response = await getToken("userCredential");
     const userData = response ? JSON.parse(response) : null;
-    if (userData && userData.token) {
+    checkPermission(userData);
+  };
+
+  const checkPermission = (userData) => {
+    console.log(userData, "userDatar");
+    if (userData) {
+      const { permissions } = userData;
+      let routeName = "Category";
+
+      if (permissions.length === 1) {
+        routeName =
+          categories.find((item) => item.permission === permissions[0])
+            ?.routeName || "Category";
+      }
+
       navigation.reset({
         index: 0,
-        routes: [{ name: "Category" }],
+        routes: [{ name: routeName }],
       });
     }
   };
@@ -49,14 +87,11 @@ export default function LoginScreen({ navigation }) {
       setIsLoading(true);
       try {
         const response = await axios.post(`/auth/login`, {
-          login: "naing",
-          password: "123",
+          login: username,
+          password,
         });
+        checkPermission(response.data);
         await saveToken(response.data);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "Category" }],
-        });
       } catch (error) {
         console.error("Error registering user:", error);
         setError("Something went wrong. Please try again.");

@@ -2,9 +2,9 @@ import { Card, IconButton, Text, useTheme } from "react-native-paper";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { getToken } from "../auth/tokenStorage";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-const categories = [
+const categoryData = [
   {
     id: "1",
     name: "အကြွေးစာရင်း",
@@ -37,7 +37,7 @@ const categories = [
 
 export default function CategoryScreen({ navigation }) {
   const theme = useTheme();
-
+  const [categories, setCategories] = useState(categoryData);
   const goToPage = (item) => {
     navigation.navigate(item.routeName);
   };
@@ -59,20 +59,11 @@ export default function CategoryScreen({ navigation }) {
     const response = await getToken("userCredential");
     const userData = response ? JSON.parse(response) : null;
     if (userData && userData.permissions.length > 1) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Category" }],
-      });
-    }
-    if (userData && userData.permissions.length === 1) {
-      const routName =
-        categories.find((item) => item.permission === userData.permissions[0])
-          ?.routeName || "Category";
-      console.log(routName, "routeName");
-      navigation.reset({
-        index: 0,
-        routes: [{ name: routName }],
-      });
+      setCategories(
+        categories.filter((item) =>
+          userData.permissions.includes(item.permission),
+        ),
+      );
     }
   };
 
