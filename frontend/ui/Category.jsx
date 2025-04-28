@@ -2,7 +2,7 @@ import { Card, IconButton, Text, useTheme } from "react-native-paper";
 import { FlatList, StyleSheet, TouchableOpacity, View } from "react-native";
 
 import { getToken } from "../auth/tokenStorage";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 
 const categoryData = [
   {
@@ -26,13 +26,6 @@ const categoryData = [
     routeName: "Bean",
     permission: "bean",
   },
-  // {
-  //   id: "4",
-  //   name: "စာရင်း",
-  //   icon: "tshirt-crew",
-  //   routeName: "Home",
-  //   permission: "tailor",
-  // },
 ];
 
 export default function CategoryScreen({ navigation }) {
@@ -55,7 +48,7 @@ export default function CategoryScreen({ navigation }) {
       </Card.Content>
     </Card>
   );
-  const checkPermission = async () => {
+  const checkPermission = useCallback(async () => {
     const response = await getToken("userCredential");
     const userData = response ? JSON.parse(response) : null;
     if (userData && userData.permissions.length > 1) {
@@ -65,11 +58,11 @@ export default function CategoryScreen({ navigation }) {
         ),
       );
     }
-  };
+  }, [categories]);
 
   useEffect(() => {
     checkPermission();
-  }, []);
+  }, [checkPermission]);
 
   return (
     <View style={styles.container}>

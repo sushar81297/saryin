@@ -1,9 +1,33 @@
 import { Button, Text, TextInput, ActivityIndicator } from "react-native-paper";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import LoadingScreen from "../components/common/Loading";
 import axios from "../api/axiosConfig";
 import { saveToken, getToken } from "../auth/tokenStorage";
+
+const categories = [
+  {
+    id: "1",
+    name: "အကြွေးစာရင်း",
+    icon: "cash",
+    routeName: "Money",
+    permission: "normal",
+  },
+  {
+    id: "2",
+    name: "ပစ္စည်းစာရင်း",
+    icon: "tag",
+    routeName: "Price",
+    permission: "price",
+  },
+  {
+    id: "3",
+    name: "ပဲစာရင်း",
+    icon: "seed",
+    routeName: "Bean",
+    permission: "bean",
+  },
+];
 
 export default function LoginScreen({ navigation }) {
   const [username, setUsername] = useState("");
@@ -13,57 +37,36 @@ export default function LoginScreen({ navigation }) {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const categories = [
-    {
-      id: "1",
-      name: "အကြွေးစာရင်း",
-      icon: "cash",
-      routeName: "Money",
-      permission: "normal",
-    },
-    {
-      id: "2",
-      name: "ပစ္စည်းစာရင်း",
-      icon: "tag",
-      routeName: "Price",
-      permission: "price",
-    },
-    {
-      id: "3",
-      name: "ပဲစာရင်း",
-      icon: "seed",
-      routeName: "Bean",
-      permission: "bean",
-    },
-  ];
-
-  const checkLogin = async () => {
+  const checkLogin = useCallback(async () => {
     const response = await getToken("userCredential");
     const userData = response ? JSON.parse(response) : null;
     checkPermission(userData);
-  };
+  }, [checkPermission]);
 
-  const checkPermission = (userData) => {
-    if (userData) {
-      const { permissions } = userData;
-      let routeName = "Category";
+  const checkPermission = useCallback(
+    (userData) => {
+      if (userData) {
+        const { permissions } = userData;
+        let routeName = "Category";
 
-      if (permissions.length === 1) {
-        routeName =
-          categories.find((item) => item.permission === permissions[0])
-            ?.routeName || "Category";
+        if (permissions.length === 1) {
+          routeName =
+            categories.find((item) => item.permission === permissions[0])
+              ?.routeName || "Category";
+        }
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: routeName }],
+        });
       }
-
-      navigation.reset({
-        index: 0,
-        routes: [{ name: routeName }],
-      });
-    }
-  };
+    },
+    [navigation],
+  );
 
   useEffect(() => {
     checkLogin();
-  }, []);
+  }, [checkLogin]);
 
   const handleLogin = async () => {
     let valid = true;

@@ -5,7 +5,7 @@ import {
   View,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "../api/axiosConfig";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { Card, Button } from "react-native-paper";
@@ -21,18 +21,19 @@ export default function PriceHistory({ route }) {
   const [itemName, setItemName] = useState(name);
   const [itemPrice, setItemPrice] = useState("");
   const [history, setHistory] = useState([]);
+
   useEffect(() => {
     fetchItem();
-  }, [id]);
+  }, [fetchItem]);
 
-  const fetchItem = async () => {
+  const fetchItem = useCallback(async () => {
     try {
       const response = await axios.get(`/inventory/${id}`);
       setHistory(response.data.prices);
     } catch (error) {
       console.error("Error fetching users:", error);
     }
-  };
+  }, [id]);
 
   const onDelete = (item) => {
     setSelectedId(item._id);
