@@ -2,7 +2,7 @@ import { Card, IconButton, Paragraph, Text, Title } from "react-native-paper";
 import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
-import TransactionDeleteDialog from "./TransactionDeleteDialog";
+import DeleteConfirmDialog from "../common/DeleteConfirmDialog";
 import TransactionUpdateDialog from "./TransactionUpdateDialog";
 import axios from "../../api/axiosConfig";
 
@@ -136,7 +136,7 @@ const TransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
         )}
       </Card.Content>
 
-      <TransactionDeleteDialog
+      <DeleteConfirmDialog
         visible={deleteDialogVisible}
         onDismiss={hideDeleteDialog}
         onConfirm={handleDeleteBalance}

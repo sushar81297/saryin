@@ -1,7 +1,7 @@
 import { Button, Text, TextInput, ActivityIndicator } from "react-native-paper";
 import React, { useState, useEffect } from "react";
 import { StyleSheet, View } from "react-native";
-import LoadingScreen from "./Loading";
+import LoadingScreen from "../components/common/Loading";
 import axios from "../api/axiosConfig";
 import { saveToken, getToken } from "../auth/tokenStorage";
 

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { StyleSheet, View } from "react-native";
 
 import BeanTransactionUpdateDialog from "./BeanTransactionUpdateDialog";
-import TransactionDeleteDialog from "./TransactionDeleteDialog";
+import DeleteConfirmDialog from "../common/DeleteConfirmDialog";
 import axios from "../../api/axiosConfig";
 
 const BeanTransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
@@ -134,7 +134,7 @@ const BeanTransactionHistory = ({ userId, balances, onBalanceDeleted }) => {
         )}
       </Card.Content>
 
-      <TransactionDeleteDialog
+      <DeleteConfirmDialog
         visible={deleteDialogVisible}
         onDismiss={hideDeleteDialog}
         onConfirm={handleDeleteBalance}

@@ -1,13 +1,24 @@
 import { Button, Card, IconButton, Searchbar } from "react-native-paper";
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  View,
+  ActivityIndicator,
+  TouchableOpacity,
+} from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import React, { useCallback, useEffect, useState } from "react";
-
+import DeleteConfirmDialog from "../components/common/DeleteConfirmDialog";
 import PriceDialog from "../components/price/PriceDialog";
 import UserPagination from "../components/home/UserPagination";
 import axios from "../api/axiosConfig";
 import { useFocusEffect } from "@react-navigation/native";
 
 export default function Price({ navigation }) {
+  const [loading, setLoading] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+  const [visible, setVisible] = useState(false);
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
@@ -18,8 +29,10 @@ export default function Price({ navigation }) {
   const [showForm, setShowForm] = useState(false);
   const [itemName, setItemName] = useState("");
   const [itemPrice, setItemPrice] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const fetchItem = async (page = 1, name = "") => {
+    setLoading(true);
     try {
       const response = await axios.get(`/inventory`, {
         params: {
@@ -37,6 +50,8 @@ export default function Price({ navigation }) {
       });
     } catch (error) {
       console.error("Error fetching users:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,6 +92,38 @@ export default function Price({ navigation }) {
     fetchItem(newPage);
   };
 
+  const handleSearch = () => {
+    console.log("Search query:", searchQuery);
+    fetchItem(1, searchQuery);
+  };
+
+  const handleClearSearch = () => {
+    setSearchQuery("");
+    fetchItem();
+  };
+
+  const onDelete = (item) => {
+    setSelectedId(item.id);
+    setVisible(true);
+  };
+
+  const hideDialog = () => {
+    setVisible(false);
+    setSelectedId(null);
+  };
+
+  const handleDelete = async () => {
+    try {
+      setLoading(true);
+      await axios.delete(`/inventory/${selectedId}`);
+      fetchItem();
+      hideDialog();
+      setLoading(false);
+    } catch (error) {
+      console.error("Error deleting item:", error);
+    }
+  };
+
   const renderItem = ({ item }) => (
     <Card
       style={styles.card}
@@ -92,10 +139,17 @@ export default function Price({ navigation }) {
           <Text style={styles.itemName}>{item.name}</Text>
           <Text style={styles.price}>{item.latestPrice} ကျပ်</Text>
         </View>
-        <IconButton icon="chevron-right" size={24} color="black" />
+        {/* <IconButton icon="chevron-right" size={24} color="black" /> */}
+        <TouchableOpacity onPress={() => onDelete(item)}>
+          <Icon name="trash-can" size={24} color="red" style={styles.icon} />
+        </TouchableOpacity>
       </Card.Content>
     </Card>
   );
+
+  if (loading) {
+    return <ActivityIndicator size="large" style={styles.loader} />;
+  }
 
   return (
     <View style={styles.container}>
@@ -113,11 +167,16 @@ export default function Price({ navigation }) {
           <Searchbar
             placeholder="ပစ္စည်းအမည် ရိုက်ထည့်ပါ"
             style={styles.searchBar}
+            onChangeText={setSearchQuery}
+            value={searchQuery}
+            onSubmitEditing={handleSearch}
+            onClearIconPress={handleClearSearch}
           />
           <IconButton
             icon="magnify"
             size={24}
             iconColor="#FFFFFF"
+            onPress={handleSearch}
             style={styles.searchButton}
           />
         </View>
@@ -142,6 +201,13 @@ export default function Price({ navigation }) {
         setItemPrice={setItemPrice}
         itemPrice={itemPrice}
         itemName={itemName}
+      />
+
+      <DeleteConfirmDialog
+        visible={visible}
+        onDismiss={hideDialog}
+        onConfirm={handleDelete}
+        isDeleting={loading}
       />
     </View>
   );
