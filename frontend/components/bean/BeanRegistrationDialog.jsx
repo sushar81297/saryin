@@ -13,7 +13,6 @@ import { useState } from "react";
 const BeanRegistrationDialog = ({
   visible,
   hideDialog,
-  newUser,
   handleInputChange,
   handleRegisterUser,
   registering,

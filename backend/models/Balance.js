@@ -1,5 +1,4 @@
-// models/Debit.js
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const balanceSchema = new mongoose.Schema(
   {
@@ -22,4 +21,4 @@ const balanceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Balance", balanceSchema);
+module.exports = mongoose.model('Balance', balanceSchema);

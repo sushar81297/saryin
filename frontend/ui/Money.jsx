@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, View } from "react-native";
 
-import BeanRegistrationDialog from "../components/bean/BeanRegistrationDialog";
 import { Button } from "react-native-paper";
 import UserList from "../components/home/UserList";
 import UserPagination from "../components/home/UserPagination";
@@ -24,7 +23,6 @@ const HomeScreen = ({ navigation }) => {
   });
 
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [beanDialogVisible, setBeanDialogVisible] = useState(false);
   const [newUser, setNewUser] = useState({
     name: "",
     phoneNumber: "",
@@ -44,6 +42,7 @@ const HomeScreen = ({ navigation }) => {
           limit: 10,
           name,
           phoneNumber,
+          type: "normal",
         },
       });
       setUsers(response.data.users);
@@ -97,21 +96,7 @@ const HomeScreen = ({ navigation }) => {
     });
     setDialogVisible(true);
   };
-  const showBeanDialog = () => {
-    setNewUser({
-      name: "",
-      phoneNumber: "",
-      totalCredit: 0,
-      totalDebit: 0,
-      currentPrice: 0,
-      remark: "",
-      type: "bean",
-    });
-    setBeanDialogVisible(true);
-  };
-
   const hideDialog = () => {
-    setBeanDialogVisible(false);
     setDialogVisible(false);
     setNewUser({
       name: "",
@@ -177,15 +162,6 @@ const HomeScreen = ({ navigation }) => {
           ငွေစာရင်းအသစ်ထည့်ရန်
         </Button>
 
-        <Button
-          mode="contained"
-          icon="plus"
-          onPress={showBeanDialog}
-          style={styles.addButton}
-        >
-          ပဲစာရင်းအသစ်ထည့်ရန်
-        </Button>
-
         <UserSearch
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
@@ -208,16 +184,6 @@ const HomeScreen = ({ navigation }) => {
 
       <UserRegistrationDialog
         visible={dialogVisible}
-        hideDialog={hideDialog}
-        newUser={newUser}
-        handleInputChange={handleInputChange}
-        handleRegisterUser={handleRegisterUser}
-        registering={registering}
-        registrationError={registrationError}
-      />
-
-      <BeanRegistrationDialog
-        visible={beanDialogVisible}
         hideDialog={hideDialog}
         newUser={newUser}
         handleInputChange={handleInputChange}

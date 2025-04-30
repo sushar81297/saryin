@@ -5,7 +5,6 @@ import BeanRegistrationDialog from "../components/bean/BeanRegistrationDialog";
 import { Button } from "react-native-paper";
 import UserList from "../components/home/UserList";
 import UserPagination from "../components/home/UserPagination";
-import UserRegistrationDialog from "../components/home/UserRegistrationDialog";
 import UserSearch from "../components/home/UserSearch";
 import axios from "../api/axiosConfig";
 import { useFocusEffect } from "@react-navigation/native";
@@ -23,7 +22,6 @@ const HomeScreen = ({ navigation }) => {
     itemsPerPage: 10,
   });
 
-  const [dialogVisible, setDialogVisible] = useState(false);
   const [beanDialogVisible, setBeanDialogVisible] = useState(false);
   const [newUser, setNewUser] = useState({
     name: "",
@@ -44,6 +42,7 @@ const HomeScreen = ({ navigation }) => {
           limit: 10,
           name,
           phoneNumber,
+          type: "bean",
         },
       });
       setUsers(response.data.users);
@@ -85,18 +84,6 @@ const HomeScreen = ({ navigation }) => {
     fetchUsers(newPage, nameFilter, phoneFilter);
   };
 
-  const showDialog = () => {
-    setNewUser({
-      name: "",
-      phoneNumber: "",
-      totalCredit: 0,
-      totalDebit: 0,
-      currentPrice: 0,
-      remark: "",
-      type: "normal",
-    });
-    setDialogVisible(true);
-  };
   const showBeanDialog = () => {
     setNewUser({
       name: "",
@@ -112,7 +99,6 @@ const HomeScreen = ({ navigation }) => {
 
   const hideDialog = () => {
     setBeanDialogVisible(false);
-    setDialogVisible(false);
     setNewUser({
       name: "",
       phoneNumber: "",
@@ -171,15 +157,6 @@ const HomeScreen = ({ navigation }) => {
         <Button
           mode="contained"
           icon="plus"
-          onPress={showDialog}
-          style={styles.addButton}
-        >
-          ငွေစာရင်းအသစ်ထည့်ရန်
-        </Button>
-
-        <Button
-          mode="contained"
-          icon="plus"
           onPress={showBeanDialog}
           style={styles.addButton}
         >
@@ -204,16 +181,6 @@ const HomeScreen = ({ navigation }) => {
       <UserPagination
         pagination={pagination}
         handlePageChange={handlePageChange}
-      />
-
-      <UserRegistrationDialog
-        visible={dialogVisible}
-        hideDialog={hideDialog}
-        newUser={newUser}
-        handleInputChange={handleInputChange}
-        handleRegisterUser={handleRegisterUser}
-        registering={registering}
-        registrationError={registrationError}
       />
 
       <BeanRegistrationDialog

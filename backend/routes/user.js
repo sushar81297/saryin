@@ -1,27 +1,19 @@
-const express = require("express");
-const router = express.Router();
-const User = require("../models/User");
-const Balance = require("../models/Balance");
+const express = require('express');
 
-// Create a new user
-router.post("/", async (req, res) => {
+const router = express.Router();
+const User = require('../models/User');
+const Balance = require('../models/Balance');
+
+router.post('/', async (req, res) => {
   try {
-    const {
+    const { name, phoneNumber, remark, totalCredit, totalDebit, type } = req.body;
+    const newUser = new User({
       name,
       phoneNumber,
       remark,
       totalCredit,
       totalDebit,
       type,
-      totalAmount,
-    } = req.body;
-    const newUser = new User({
-      name,
-      phoneNumber,
-      remark,
-      totalCredit: totalCredit,
-      totalDebit: totalDebit,
-      type: type,
       totalAmount: totalCredit - totalDebit,
     });
 
@@ -32,34 +24,34 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Get all users
-router.get("/", async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const page = req.query.page ? Number(req.query.page) : 1;
+    const limit = req.query.limit ? Number(req.query.limit) : 10;
     const skip = (page - 1) * limit;
 
-    // Add filter parameters
-    const { name, phoneNumber } = req.query;
+    const { name, phoneNumber, type } = req.query;
     const filter = {};
 
-    // Create OR condition if either name or phoneNumber is provided
     if (name || phoneNumber) {
       filter.$or = [];
 
       if (name) {
-        filter.$or.push({ name: { $regex: name, $options: "i" } });
+        filter.$or.push({ name: { $regex: name, $options: 'i' } });
       }
 
       if (phoneNumber) {
         filter.$or.push({
-          phoneNumber: { $regex: phoneNumber, $options: "i" },
+          phoneNumber: { $regex: phoneNumber, $options: 'i' },
         });
       }
     }
+    if (type) {
+      filter.type = type;
+    }
     const totalUsers = await User.countDocuments(filter);
     const users = await User.find(filter)
-      .populate("balance")
+      .populate('balance')
       .skip(skip)
       .limit(limit)
       .sort({ createdAt: -1 });
@@ -78,38 +70,28 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Get a specific user by ID
-router.get("/:id", async (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id).populate({
-      path: "balance",
+      path: 'balance',
       options: { sort: { createdAt: -1 } }, // Sort balance in descending order by createdAt
     });
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
-    res.status(200).json(user);
+    return res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 });
 
-// Update a user
-router.put("/:id", async (req, res) => {
+router.put('/:id', async (req, res) => {
   try {
-    const {
-      name,
-      phoneNumber,
-      remark,
-      totalCredit,
-      totalDebit,
-      type,
-      totalAmount,
-    } = req.body;
+    const { name, phoneNumber, remark, totalCredit, totalDebit, type } = req.body;
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
     const credit = totalCredit || user.totalCredit;
     const debit = totalDebit || user.totalDebit;
@@ -119,7 +101,7 @@ router.put("/:id", async (req, res) => {
       remark: remark || user.remark,
       totalCredit: credit,
       totalDebit: debit,
-      type: type,
+      type,
       totalAmount: credit - debit,
     };
     const updatedUser = await User.findByIdAndUpdate(req.params.id, payload, {
@@ -127,22 +109,21 @@ router.put("/:id", async (req, res) => {
     });
 
     if (!updatedUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    res.status(200).json(updatedUser);
+    return res.status(200).json(updatedUser);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 });
 
-// Delete a user
-router.delete("/:id", async (req, res) => {
+router.delete('/:id', async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     // Delete all associated balance entries
@@ -153,20 +134,17 @@ router.delete("/:id", async (req, res) => {
     // Delete the user
     await User.findByIdAndDelete(req.params.id);
 
-    res
-      .status(200)
-      .json({ message: "User and associated balances deleted successfully" });
+    return res.status(200).json({ message: 'User and associated balances deleted successfully' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 });
 
-// Add a balance to a user
-router.post("/:id/balance", async (req, res) => {
+router.post('/:id/balance', async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
 
     const { credit, debit } = req.body;
@@ -186,12 +164,12 @@ router.post("/:id/balance", async (req, res) => {
 
     await user.save();
 
-    res.status(201).json({
+    return res.status(201).json({
       user,
       addedBalance: savedBalance,
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    return res.status(400).json({ message: error.message });
   }
 });
 
